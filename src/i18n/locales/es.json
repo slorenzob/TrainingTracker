@@ -96,10 +96,49 @@
     "archived": "Retirado"
   },
   "settings": {
+    "backup": "Copia de seguridad",
+    "backupHelp": "Tus datos solo están en este dispositivo. Exporta una copia de vez en cuando y guárdala en un lugar seguro (Drive, iCloud, el ordenador…).",
+    "lastBackup": "Última copia: {{date}}",
+    "neverBackedUp": "Todavía no has hecho ninguna copia.",
+    "backupDue": "Hace más de {{days}} días de la última copia.",
+    "export": "Exportar copia",
+    "import": "Importar copia",
+    "exporting": "Preparando la copia…",
+    "importing": "Leyendo la copia…",
+    "restoring": "Restaurando…",
+    "exported": "Copia exportada.",
+    "missingMedia_one": "{{count}} archivo no se ha podido incluir porque ya no estaba en el dispositivo.",
+    "missingMedia_other": "{{count}} archivos no se han podido incluir porque ya no estaban en el dispositivo.",
+    "importTitle": "¿Reemplazar todos los datos?",
+    "importMessage": "La copia del {{date}} contiene {{summary}}. Los datos actuales de este dispositivo se borrarán.",
+    "importConfirm": "Reemplazar",
+    "imported": "Copia restaurada.",
+    "errors": {
+      "notZip": "El archivo no es una copia válida (no es un ZIP).",
+      "missingData": "El ZIP no contiene una copia de Training Tracker.",
+      "invalidData": "La copia está dañada o incompleta.",
+      "newerVersion": "La copia se hizo con una versión más nueva de la app. Actualízala e inténtalo de nuevo.",
+      "unknown": "No se ha podido completar la operación."
+    },
     "storage": "Almacenamiento",
     "storageUsage": "{{used}} usados de {{quota}}",
     "persisted": "Almacenamiento persistente activado",
-    "notPersisted": "El navegador podría borrar los datos si falta espacio. Instala la app para protegerlos."
+    "notPersisted": "El navegador podría borrar los datos si falta espacio. Instala la app y pulsa «Proteger datos».",
+    "persist": "Proteger datos",
+    "persistDenied": "El navegador no lo ha permitido. Suele concederse al instalar la app en la pantalla de inicio.",
+    "backupDueBadge": "Toca hacer una copia de seguridad",
+    "counts": {
+      "dogs_one": "{{count}} perro",
+      "dogs_other": "{{count}} perros",
+      "exercises_one": "{{count}} ejercicio",
+      "exercises_other": "{{count}} ejercicios",
+      "plans_one": "{{count}} plan",
+      "plans_other": "{{count}} planes",
+      "sessions_one": "{{count}} sesión",
+      "sessions_other": "{{count}} sesiones",
+      "media_one": "{{count}} foto o vídeo",
+      "media_other": "{{count}} fotos o vídeos"
+    }
   },
   "plans": {
     "new": "Nuevo plan",

@@ -1,18 +1,7 @@
-import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  setupIonicReact,
-} from '@ionic/react'
+import { IonApp, IonRouterOutlet, IonTabs, setupIonicReact } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import { barbell, pawOutline, settingsOutline, statsChart } from 'ionicons/icons'
 import { Redirect, Route } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { TAB_BAR_ID } from './components/useAppToast'
+import AppTabBar from './components/AppTabBar'
 
 import DogDetailPage from './features/dogs/DogDetailPage'
 import DogsPage from './features/dogs/DogsPage'
@@ -43,8 +32,6 @@ const ID = '[0-9a-f-]{36}'
 const PLAN = `/dogs/:dogId(${ID})/plans/:planId(${ID})`
 
 export default function App() {
-  const { t } = useTranslation()
-
   return (
     <IonApp>
       <IonReactRouter>
@@ -88,24 +75,7 @@ export default function App() {
               <Redirect to="/dogs" />
             </Route>
           </IonRouterOutlet>
-          <IonTabBar slot="bottom" id={TAB_BAR_ID}>
-            <IonTabButton tab="dogs" href="/dogs">
-              <IonIcon aria-hidden icon={pawOutline} />
-              <IonLabel>{t('tabs.dogs')}</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="exercises" href="/exercises">
-              <IonIcon aria-hidden icon={barbell} />
-              <IonLabel>{t('tabs.exercises')}</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="progress" href="/progress">
-              <IonIcon aria-hidden icon={statsChart} />
-              <IonLabel>{t('tabs.progress')}</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="settings" href="/settings">
-              <IonIcon aria-hidden icon={settingsOutline} />
-              <IonLabel>{t('tabs.settings')}</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
+          <AppTabBar />
         </IonTabs>
       </IonReactRouter>
     </IonApp>

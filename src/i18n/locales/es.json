@@ -8,11 +8,62 @@
     "progress": "Progreso",
     "settings": "Ajustes"
   },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Añadir",
+    "back": "Atrás",
+    "close": "Cerrar",
+    "remove": "Quitar",
+    "optional": "opcional",
+    "notFound": "No se ha encontrado."
+  },
+  "media": {
+    "add": "Añadir foto o vídeo",
+    "addPhoto": "Elegir foto",
+    "changePhoto": "Cambiar foto",
+    "removePhoto": "Quitar foto",
+    "video": "Vídeo",
+    "missing": "Archivo no disponible",
+    "largeTitle": "Archivo grande",
+    "largeMessage": "{{name}} ocupa {{size}}. Los archivos grandes llenan rápido el almacenamiento del móvil. ¿Añadirlo igualmente?",
+    "readError": "No se ha podido guardar el archivo."
+  },
   "dogs": {
-    "empty": "Todavía no has añadido ningún perro."
+    "empty": "Todavía no has añadido ningún perro.",
+    "new": "Nuevo perro",
+    "editTitle": "Editar perro",
+    "name": "Nombre",
+    "breed": "Raza",
+    "birthDate": "Fecha de nacimiento",
+    "born": "Nació el {{date}}",
+    "plans": "Planes de entrenamiento",
+    "plansSoon": "Aquí aparecerán los planes de entrenamiento de {{name}}.",
+    "deleteTitle": "¿Eliminar a {{name}}?",
+    "deleteMessage": "Se borrarán también todos sus planes, sesiones y puntuaciones. Esta acción no se puede deshacer.",
+    "nameRequired": "El nombre es obligatorio."
   },
   "exercises": {
-    "empty": "La biblioteca de ejercicios está vacía."
+    "empty": "La biblioteca de ejercicios está vacía.",
+    "noResults": "Ningún ejercicio coincide con la búsqueda.",
+    "search": "Buscar ejercicio",
+    "new": "Nuevo ejercicio",
+    "editTitle": "Editar ejercicio",
+    "title": "Título",
+    "description": "Descripción",
+    "noDescription": "Sin descripción.",
+    "links": "Enlaces",
+    "linkUrl": "URL",
+    "linkLabel": "Texto del enlace",
+    "addLink": "Añadir enlace",
+    "invalidLink": "Introduce una URL que empiece por http:// o https://",
+    "media": "Fotos y vídeos",
+    "titleRequired": "El título es obligatorio.",
+    "deleteTitle": "¿Eliminar «{{title}}»?",
+    "deleteMessage": "Se borrará de la biblioteca junto con sus fotos y vídeos.",
+    "inUse": "No se puede eliminar: el ejercicio forma parte de algún plan."
   },
   "progress": {
     "empty": "Registra alguna sesión para ver tu progreso."

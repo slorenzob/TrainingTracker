@@ -1,0 +1,33 @@
+.exercise-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--ion-color-step-100, #e0e0e0);
+  color: var(--ion-color-medium);
+  font-size: 1.5rem;
+}
+
+.exercise-description {
+  white-space: pre-wrap;
+}
+
+.exercise-section {
+  padding: 0 16px 16px;
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.link-row__fields {
+  flex: 1;
+}
+
+.exercise-section .media-grid {
+  margin-bottom: 12px;
+}

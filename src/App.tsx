@@ -13,7 +13,10 @@ import { barbell, pawOutline, settingsOutline, statsChart } from 'ionicons/icons
 import { Redirect, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import DogDetailPage from './features/dogs/DogDetailPage'
 import DogsPage from './features/dogs/DogsPage'
+import ExerciseDetailPage from './features/exercises/ExerciseDetailPage'
+import ExerciseFormPage from './features/exercises/ExerciseFormPage'
 import ExercisesPage from './features/exercises/ExercisesPage'
 import ProgressPage from './features/stats/ProgressPage'
 import SettingsPage from './features/settings/SettingsPage'
@@ -30,6 +33,9 @@ import './theme/variables.css'
 
 setupIonicReact()
 
+/** Route param pattern for record ids (UUIDs), so `/exercises/new` never matches `:exerciseId`. */
+const ID = '[0-9a-f-]{36}'
+
 export default function App() {
   const { t } = useTranslation()
 
@@ -39,7 +45,11 @@ export default function App() {
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/dogs" component={DogsPage} />
+            <Route exact path={`/dogs/:dogId(${ID})`} component={DogDetailPage} />
             <Route exact path="/exercises" component={ExercisesPage} />
+            <Route exact path="/exercises/new" component={ExerciseFormPage} />
+            <Route exact path={`/exercises/:exerciseId(${ID})`} component={ExerciseDetailPage} />
+            <Route exact path={`/exercises/:exerciseId(${ID})/edit`} component={ExerciseFormPage} />
             <Route exact path="/progress" component={ProgressPage} />
             <Route exact path="/settings" component={SettingsPage} />
             <Route exact path="/">

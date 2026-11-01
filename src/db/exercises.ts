@@ -3,6 +3,7 @@ import { ExerciseInUseError, EntityNotFoundError, ValidationError } from './erro
 import { db } from './schema'
 import type { Exercise } from './types'
 import { newId, nowIso } from './utils'
+import { isHttpUrl } from './validation'
 
 export type ExerciseInput = Pick<Exercise, 'title' | 'description' | 'links' | 'media'>
 
@@ -11,12 +12,7 @@ function validate(input: Partial<ExerciseInput>) {
     throw new ValidationError('Exercise title is required')
   }
   for (const link of input.links ?? []) {
-    try {
-      const { protocol } = new URL(link.url)
-      if (protocol !== 'http:' && protocol !== 'https:') throw new Error()
-    } catch {
-      throw new ValidationError(`Invalid link: ${link.url}`)
-    }
+    if (!isHttpUrl(link.url)) throw new ValidationError(`Invalid link: ${link.url}`)
   }
 }
 

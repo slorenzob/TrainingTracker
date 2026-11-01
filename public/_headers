@@ -1,0 +1,10 @@
+# Cloudflare Pages cache rules (https://developers.cloudflare.com/pages/configuration/headers/).
+# Everything revalidates on each load: index.html, sw.js, the manifest and the icons, whose
+# names must stay fixed. Compiled files under /assets/ carry the build timestamp and a content
+# hash in their names, so they never change in place and can be cached for good.
+/*
+  Cache-Control: no-cache
+
+/assets/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable

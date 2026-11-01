@@ -4,11 +4,24 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// UTC build timestamp (YYYYMMDDHHmmss), stamped into every compiled file name so each build
+// gets new URLs and browsers can't serve a previous build's files from cache.
+const buildId = new Date().toISOString().replace(/\D/g, '').slice(0, 14)
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   // Served from the domain root (Cloudflare Pages). Absolute asset paths keep deep links
   // like /dogs/<id> working on reload; a relative base would resolve them under /dogs/.
   base: '/',
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name]-${buildId}-[hash].js`,
+        chunkFileNames: `assets/[name]-${buildId}-[hash].js`,
+        assetFileNames: `assets/[name]-${buildId}-[hash][extname]`,
+      },
+    },
+  },
   plugins: [
     react(),
     // `npm run dev:lan`: self-signed HTTPS so phones on the local network get a secure

@@ -44,6 +44,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // Page tests render the whole Ionic app over IndexedDB and get slow when files run in parallel.
+    testTimeout: 15000,
     server: { deps: { inline: ['@ionic/react', '@ionic/core', 'ionicons'] } },
   },
 })

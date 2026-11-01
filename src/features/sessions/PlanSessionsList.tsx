@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import EmptyState from '../../components/EmptyState'
 import StarRating from '../../components/StarRating'
 import { listSessionSummaries } from '../../db/sessions'
-import { formatDate } from '../../i18n/format'
+import { formatAverage, formatDate } from '../../i18n/format'
 
 interface PlanSessionsListProps {
   dogId: string
@@ -13,8 +13,6 @@ interface PlanSessionsListProps {
   /** Number of active exercises; sessions can't be recorded for an empty plan. */
   exerciseCount: number
 }
-
-const formatAverage = (value: number) => value.toLocaleString('es-ES', { maximumFractionDigits: 1 })
 
 export default function PlanSessionsList({ dogId, planId, exerciseCount }: PlanSessionsListProps) {
   const { t } = useTranslation()

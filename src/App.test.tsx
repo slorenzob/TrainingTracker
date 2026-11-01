@@ -125,3 +125,38 @@ describe('sessions', () => {
     expect(screen.getByText('No realizado')).toBeInTheDocument()
   })
 })
+
+describe('progress', () => {
+  it('summarizes the selected plan and shows an exercise’s history', async () => {
+    const dog = await createDog({ name: 'Toby' })
+    const ids = []
+    for (const title of ['Llamada', 'Quieto']) {
+      ids.push((await createExercise({ title, description: '', links: [], media: [] })).id)
+    }
+    const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, ids)
+    const [llamada] = await getPlanExercises(plan.id)
+    for (const [date, stars] of [
+      ['2026-10-03', 2],
+      ['2026-10-10', 4],
+    ] as const) {
+      await createSession(plan.id, {
+        date,
+        comment: '',
+        results: [{ planExerciseId: llamada.id, stars }],
+      })
+    }
+
+    const { unmount } = renderAt(`/progress?plan=${plan.id}`)
+    expect(await screen.findByText('2 veces · media 3')).toBeInTheDocument()
+    expect(screen.getByText('Menos practicados')).toBeInTheDocument()
+    expect(screen.getAllByText('Sin practicar').length).toBeGreaterThan(0)
+    unmount()
+
+    renderAt(`/progress/dogs/${dog.id}/exercises/${ids[0]}`)
+    expect(await screen.findByText('Historial')).toBeInTheDocument()
+    expect(
+      await screen.findByRole('img', { name: /Evolución de las estrellas de Llamada con Toby/ }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '10 oct 2026: 4 estrellas' })).toBeInTheDocument()
+  })
+})

@@ -118,6 +118,10 @@ export default function PlanDetailPage() {
     presentActions({
       buttons: [
         { text: t('common.edit'), handler: () => setModal('edit') },
+        {
+          text: t('progress.viewProgress'),
+          handler: () => router.push(`/progress?plan=${plan.id}`),
+        },
         { text: t('plans.duplicate'), handler: () => setModal('duplicate') },
         plan.status === 'active'
           ? { text: t('plans.finish'), handler: () => void finishPlan(plan.id) }

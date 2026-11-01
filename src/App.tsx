@@ -22,6 +22,7 @@ import ExercisesPage from './features/exercises/ExercisesPage'
 import PlanDetailPage from './features/plans/PlanDetailPage'
 import SessionDetailPage from './features/sessions/SessionDetailPage'
 import SessionFormPage from './features/sessions/SessionFormPage'
+import ExerciseProgressPage from './features/stats/ExerciseProgressPage'
 import ProgressPage from './features/stats/ProgressPage'
 import SettingsPage from './features/settings/SettingsPage'
 
@@ -77,6 +78,11 @@ export default function App() {
             <Route exact path={`/exercises/:exerciseId(${ID})`} component={ExerciseDetailPage} />
             <Route exact path={`/exercises/:exerciseId(${ID})/edit`} component={ExerciseFormPage} />
             <Route exact path="/progress" component={ProgressPage} />
+            <Route
+              exact
+              path={`/progress/dogs/:dogId(${ID})/exercises/:exerciseId(${ID})`}
+              component={ExerciseProgressPage}
+            />
             <Route exact path="/settings" component={SettingsPage} />
             <Route exact path="/">
               <Redirect to="/dogs" />

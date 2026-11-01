@@ -70,7 +70,30 @@
     "inUse": "No se puede eliminar: el ejercicio forma parte de algún plan."
   },
   "progress": {
-    "empty": "Registra alguna sesión para ver tu progreso."
+    "empty": "Registra alguna sesión para ver tu progreso.",
+    "noDogs": "Añade un perro y crea un plan para ver su progreso.",
+    "noPlans": "{{name}} todavía no tiene planes.",
+    "dog": "Perro",
+    "plan": "Plan",
+    "sessions": "Sesiones",
+    "average": "Media",
+    "lastSession": "Última sesión",
+    "leastPracticed": "Menos practicados",
+    "leastPracticedHelp": "Ejercicios activos que se han practicado menos que el resto.",
+    "byExercise": "Por ejercicio",
+    "practiced_zero": "Sin practicar",
+    "practiced_one": "{{count}} vez",
+    "practiced_other": "{{count}} veces",
+    "averageValue": "media {{value}}",
+    "viewProgress": "Ver progreso",
+    "exerciseTitle": "Evolución",
+    "ratings": "Valoraciones",
+    "lastRating": "Última",
+    "chartTitle": "Estrellas por sesión",
+    "chartDescription": "Evolución de las estrellas de {{exercise}} con {{dog}}, de la sesión más antigua a la más reciente.",
+    "history": "Historial",
+    "noRatings": "{{dog}} todavía no tiene valoraciones en este ejercicio.",
+    "archived": "Retirado"
   },
   "settings": {
     "storage": "Almacenamiento",

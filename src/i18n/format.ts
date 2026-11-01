@@ -17,3 +17,7 @@ export const normalizeForSearch = (value: string): string =>
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()
+
+/** Mean star rating with one decimal ("3,5"), or a dash when there is none. */
+export const formatAverage = (value: number | undefined): string =>
+  value === undefined ? '—' : value.toLocaleString(LOCALE, { maximumFractionDigits: 1 })

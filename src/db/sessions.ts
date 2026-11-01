@@ -100,6 +100,30 @@ export const listSessionsForPlan = async (planId: string): Promise<Session[]> =>
     await db.sessions.where('[planId+date]').between([planId, ''], [planId, '￿']).toArray()
   ).reverse()
 
+export interface SessionSummary extends Session {
+  ratedCount: number
+  /** Mean stars of the rated exercises, or undefined if none were rated. */
+  average?: number
+}
+
+export const averageStars = (results: readonly Pick<SessionResult, 'stars'>[]) =>
+  results.length ? results.reduce((sum, r) => sum + r.stars, 0) / results.length : undefined
+
+/** Sessions of a plan, newest first, with how many exercises were rated and their mean. */
+export async function listSessionSummaries(planId: string): Promise<SessionSummary[]> {
+  const sessions = await listSessionsForPlan(planId)
+  const results = await db.sessionResults
+    .where('sessionId')
+    .anyOf(sessions.map((s) => s.id))
+    .toArray()
+  const bySession = new Map<string, SessionResult[]>()
+  for (const r of results) bySession.set(r.sessionId, [...(bySession.get(r.sessionId) ?? []), r])
+  return sessions.map((session) => {
+    const own = bySession.get(session.id) ?? []
+    return { ...session, ratedCount: own.length, average: averageStars(own) }
+  })
+}
+
 export async function deleteSession(id: string): Promise<void> {
   await db.transaction('rw', [db.sessions, db.sessionResults], async () => {
     if (!(await db.sessions.get(id))) throw new EntityNotFoundError('Session', id)

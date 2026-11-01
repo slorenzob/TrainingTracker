@@ -20,6 +20,8 @@ import ExerciseDetailPage from './features/exercises/ExerciseDetailPage'
 import ExerciseFormPage from './features/exercises/ExerciseFormPage'
 import ExercisesPage from './features/exercises/ExercisesPage'
 import PlanDetailPage from './features/plans/PlanDetailPage'
+import SessionDetailPage from './features/sessions/SessionDetailPage'
+import SessionFormPage from './features/sessions/SessionFormPage'
 import ProgressPage from './features/stats/ProgressPage'
 import SettingsPage from './features/settings/SettingsPage'
 
@@ -37,6 +39,7 @@ setupIonicReact()
 
 /** Route param pattern for record ids (UUIDs), so `/exercises/new` never matches `:exerciseId`. */
 const ID = '[0-9a-f-]{36}'
+const PLAN = `/dogs/:dogId(${ID})/plans/:planId(${ID})`
 
 export default function App() {
   const { t } = useTranslation()
@@ -57,6 +60,17 @@ export default function App() {
               exact
               path={`/dogs/:dogId(${ID})/plans/:planId(${ID})/exercises/:exerciseId(${ID})`}
               component={ExerciseDetailPage}
+            />
+            <Route exact path={`${PLAN}/sessions/new`} component={SessionFormPage} />
+            <Route
+              exact
+              path={`${PLAN}/sessions/:sessionId(${ID})`}
+              component={SessionDetailPage}
+            />
+            <Route
+              exact
+              path={`${PLAN}/sessions/:sessionId(${ID})/edit`}
+              component={SessionFormPage}
             />
             <Route exact path="/exercises" component={ExercisesPage} />
             <Route exact path="/exercises/new" component={ExerciseFormPage} />

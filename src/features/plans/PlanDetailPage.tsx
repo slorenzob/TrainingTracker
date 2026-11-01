@@ -39,6 +39,7 @@ import {
   type PlanExerciseWithDetails,
 } from '../../db/plans'
 import MediaThumb from '../../media/MediaThumb'
+import PlanSessionsList from '../sessions/PlanSessionsList'
 import DuplicatePlanModal from './DuplicatePlanModal'
 import ExercisePickerModal from './ExercisePickerModal'
 import PlanFormModal from './PlanFormModal'
@@ -216,12 +217,9 @@ export default function PlanDetailPage() {
         </IonList>
       )}
 
-      <IonList inset>
-        <IonListHeader>
-          <IonLabel>{t('plans.sessions')}</IonLabel>
-        </IonListHeader>
-      </IonList>
-      <EmptyState message={t('plans.sessionsSoon')} />
+      {exercises && (
+        <PlanSessionsList dogId={dogId} planId={plan.id} exerciseCount={active.length} />
+      )}
 
       <PlanFormModal isOpen={modal === 'edit'} plan={plan} onDismiss={() => setModal(null)} />
       <DuplicatePlanModal

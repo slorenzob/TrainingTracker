@@ -95,3 +95,33 @@ describe('plans', () => {
     expect(screen.getByText('Restaurar')).toBeInTheDocument()
   })
 })
+
+describe('sessions', () => {
+  it('shows a session with its ratings, notes and the exercises not done', async () => {
+    const dog = await createDog({ name: 'Toby' })
+    const ids = []
+    for (const title of ['Llamada', 'Quieto', 'Sentado']) {
+      ids.push((await createExercise({ title, description: '', links: [], media: [] })).id)
+    }
+    const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, ids)
+    const [llamada, , sentado] = await getPlanExercises(plan.id)
+    const session = await createSession(plan.id, {
+      date: '2026-11-01',
+      comment: 'Buena sesión en el parque',
+      results: [
+        { planExerciseId: llamada.id, stars: 4, note: 'Viene a la primera' },
+        { planExerciseId: sentado.id, stars: 3 },
+      ],
+    })
+
+    const { unmount } = renderAt(`/dogs/${dog.id}/plans/${plan.id}`)
+    expect(await screen.findByText('2 de 3 ejercicios · Media 3,5')).toBeInTheDocument()
+    unmount()
+
+    renderAt(`/dogs/${dog.id}/plans/${plan.id}/sessions/${session.id}`)
+    expect(await screen.findByText('Buena sesión en el parque')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Llamada: 4 estrellas' })).toBeInTheDocument()
+    expect(screen.getByText('Viene a la primera')).toBeInTheDocument()
+    expect(screen.getByText('No realizado')).toBeInTheDocument()
+  })
+})

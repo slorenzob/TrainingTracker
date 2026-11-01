@@ -1,0 +1,30 @@
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ion-color-warning);
+}
+
+.star-rating--small {
+  gap: 1px;
+  font-size: 1rem;
+}
+
+.star-rating--large {
+  gap: 2px;
+  font-size: 2rem;
+}
+
+.star-rating__star {
+  display: flex;
+  /* Comfortable touch target while out in the park. */
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}

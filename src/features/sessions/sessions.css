@@ -1,0 +1,32 @@
+.session-help {
+  margin: 0;
+  padding: 0 16px;
+  font-size: 0.875rem;
+}
+
+.session-exercise__body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.session-exercise__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.session-exercise .star-rating--large {
+  margin-left: -10px;
+}
+
+.session-comment {
+  white-space: pre-wrap;
+}
+
+.session-result__note {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+}

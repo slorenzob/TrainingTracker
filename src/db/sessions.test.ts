@@ -7,6 +7,7 @@ import {
   createSession,
   deleteSession,
   getSession,
+  listSessionSummaries,
   listSessionsForPlan,
   updateSession,
 } from './sessions'
@@ -106,5 +107,24 @@ describe('sessions', () => {
     ])
     await deleteSession(latest.id)
     expect(await listSessionsForPlan(plan.id)).toHaveLength(2)
+  })
+
+  it('summarizes sessions with rated count and average stars', async () => {
+    await createSession(plan.id, {
+      date: '2026-10-05',
+      comment: '',
+      results: [
+        { planExerciseId: sit.id, stars: 4 },
+        { planExerciseId: stay.id, stars: 3 },
+      ],
+    })
+    await createSession(plan.id, { date: '2026-10-07', comment: 'Sin puntuar', results: [] })
+
+    const summaries = await listSessionSummaries(plan.id)
+
+    expect(summaries.map((s) => [s.date, s.ratedCount, s.average])).toEqual([
+      ['2026-10-07', 0, undefined],
+      ['2026-10-05', 2, 3.5],
+    ])
   })
 })

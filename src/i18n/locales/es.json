@@ -100,7 +100,6 @@
     "removed": "Ejercicio quitado del plan.",
     "archivedToast": "Ejercicio retirado. Sus puntuaciones se conservan.",
     "sessions": "Sesiones",
-    "sessionsSoon": "Aquí aparecerán las sesiones de este plan.",
     "duplicate": "Duplicar plan",
     "duplicateTitle": "Duplicar plan",
     "duplicateFor": "Para",
@@ -114,6 +113,35 @@
     "pickerTitle": "Añadir ejercicios",
     "pickerEmpty": "No hay más ejercicios en la biblioteca. Créalos en la pestaña Ejercicios.",
     "pickerAdd_one": "Añadir {{count}}",
-    "pickerAdd_other": "Añadir {{count}}"
+    "pickerAdd_other": "Añadir {{count}}",
+    "noSessions": "Todavía no hay sesiones de este plan.",
+    "newSession": "Nueva sesión",
+    "sessionsNeedExercises": "Añade ejercicios al plan para registrar sesiones."
+  },
+  "sessions": {
+    "new": "Nueva sesión",
+    "editTitle": "Editar sesión",
+    "title": "Sesión del {{date}}",
+    "date": "Fecha",
+    "comment": "Comentario de la sesión",
+    "noComment": "Sin comentario.",
+    "exercises": "Ejercicios",
+    "exercisesHelp": "Puntúa solo los ejercicios que hayáis practicado. Toca de nuevo la misma estrella para quitar la puntuación.",
+    "note": "Nota sobre {{title}}",
+    "notePlaceholder": "Nota (opcional)",
+    "notDone": "No realizado",
+    "archivedExercise": "Retirado del plan",
+    "needOneRating": "Puntúa al menos un ejercicio.",
+    "done_one": "{{count}} de {{total}} ejercicio",
+    "done_other": "{{count}} de {{total}} ejercicios",
+    "average": "Media {{value}}",
+    "deleteTitle": "¿Eliminar esta sesión?",
+    "deleteMessage": "Se borrarán sus puntuaciones y notas.",
+    "saved": "Sesión guardada."
+  },
+  "stars": {
+    "label": "Puntuación",
+    "value_one": "{{count}} estrella",
+    "value_other": "{{count}} estrellas"
   }
 }

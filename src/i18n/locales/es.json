@@ -1,0 +1,26 @@
+{
+  "app": {
+    "name": "Training Tracker"
+  },
+  "tabs": {
+    "dogs": "Perros",
+    "exercises": "Ejercicios",
+    "progress": "Progreso",
+    "settings": "Ajustes"
+  },
+  "dogs": {
+    "empty": "Todavía no has añadido ningún perro."
+  },
+  "exercises": {
+    "empty": "La biblioteca de ejercicios está vacía."
+  },
+  "progress": {
+    "empty": "Registra alguna sesión para ver tu progreso."
+  },
+  "settings": {
+    "storage": "Almacenamiento",
+    "storageUsage": "{{used}} usados de {{quota}}",
+    "persisted": "Almacenamiento persistente activado",
+    "notPersisted": "El navegador podría borrar los datos si falta espacio. Instala la app para protegerlos."
+  }
+}

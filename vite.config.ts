@@ -1,14 +1,18 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   // Relative base so the build works under any hosting path (e.g. GitHub Pages).
   base: './',
   plugins: [
     react(),
+    // `npm run dev:lan`: self-signed HTTPS so phones on the local network get a secure
+    // context (camera, OPFS). The browser will show a certificate warning to accept.
+    ...(mode === 'lan' ? [basicSsl({ name: 'training-tracker-dev' })] : []),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
@@ -48,4 +52,4 @@ export default defineConfig({
     testTimeout: 15000,
     server: { deps: { inline: ['@ionic/react', '@ionic/core', 'ionicons'] } },
   },
-})
+}))

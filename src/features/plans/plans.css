@@ -21,8 +21,8 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 8px;
-  background: var(--ion-background-color-step-100, var(--ion-color-step-100, #e0e0e0));
-  color: var(--ion-color-medium);
+  border-radius: var(--tt-radius-md);
+  background: var(--tt-surface-sunken);
+  color: var(--tt-ink-muted);
   font-size: 1.5rem;
 }

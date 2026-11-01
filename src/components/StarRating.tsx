@@ -14,6 +14,8 @@ interface StarRatingProps {
 
 const STARS = [1, 2, 3, 4, 5] as const
 
+const isOn = (value: number | undefined, n: number) => value !== undefined && n <= value
+
 export default function StarRating({ value, onChange, label, size = 'small' }: StarRatingProps) {
   const { t } = useTranslation()
   const groupLabel = label ?? t('stars.label')
@@ -28,7 +30,8 @@ export default function StarRating({ value, onChange, label, size = 'small' }: S
         {STARS.map((n) => (
           <IonIcon
             key={n}
-            icon={value !== undefined && n <= value ? star : starOutline}
+            icon={isOn(value, n) ? star : starOutline}
+            className={isOn(value, n) ? undefined : 'star-rating__off'}
             aria-hidden
           />
         ))}
@@ -48,7 +51,11 @@ export default function StarRating({ value, onChange, label, size = 'small' }: S
           className="star-rating__star"
           onClick={() => onChange(value === n ? undefined : n)}
         >
-          <IonIcon icon={value !== undefined && n <= value ? star : starOutline} aria-hidden />
+          <IonIcon
+            icon={isOn(value, n) ? star : starOutline}
+            className={isOn(value, n) ? undefined : 'star-rating__off'}
+            aria-hidden
+          />
         </button>
       ))}
     </span>

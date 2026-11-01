@@ -23,6 +23,7 @@ import '@ionic/react/css/padding.css'
 import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/display.css'
 import '@ionic/react/css/palettes/dark.system.css'
+import '@fontsource-variable/atkinson-hyperlegible-next'
 import './theme/variables.css'
 
 setupIonicReact()

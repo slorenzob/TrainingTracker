@@ -5,8 +5,8 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 50%;
-  background: var(--ion-color-primary-tint);
-  color: var(--ion-color-primary-contrast);
+  background: var(--tt-primary-soft);
+  color: var(--tt-on-primary-soft);
 }
 
 .dog-avatar .media-thumb {

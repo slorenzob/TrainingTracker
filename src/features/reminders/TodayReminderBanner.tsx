@@ -69,7 +69,7 @@ export default function TodayReminderBanner() {
   )
 
   return (
-    <IonCard className="reminder-banner" color="light" role="status">
+    <IonCard className="reminder-banner" role="status">
       <IonCardHeader>
         <IonCardTitle>
           <IonIcon icon={alarmOutline} aria-hidden /> {t('reminders.dueToday', { dogs: names })}

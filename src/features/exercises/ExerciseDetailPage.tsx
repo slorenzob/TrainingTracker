@@ -8,11 +8,11 @@ import {
   IonText,
   useIonAlert,
   useIonRouter,
-  useIonToast,
 } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { createOutline, linkOutline, trashOutline } from 'ionicons/icons'
 import { useTranslation } from 'react-i18next'
+import { useAppToast } from '../../components/useAppToast'
 import { useParams } from 'react-router-dom'
 import EmptyState from '../../components/EmptyState'
 import PageLayout from '../../components/PageLayout'
@@ -23,22 +23,28 @@ import './exercises.css'
 
 export default function ExerciseDetailPage() {
   const { t } = useTranslation()
-  const { exerciseId } = useParams<{ exerciseId: string }>()
+  const { exerciseId, dogId, planId } = useParams<{
+    exerciseId: string
+    dogId?: string
+    planId?: string
+  }>()
+  // Also opened from a plan, inside the Dogs tab.
+  const backHref = planId ? `/dogs/${dogId}/plans/${planId}` : '/exercises'
   const router = useIonRouter()
   const [presentAlert] = useIonAlert()
-  const [presentToast] = useIonToast()
+  const presentToast = useAppToast()
   // undefined while loading, null when the exercise does not exist.
   const exercise = useLiveQuery(async () => (await getExercise(exerciseId)) ?? null, [exerciseId])
 
   if (exercise === undefined)
     return (
-      <PageLayout title="" backHref="/exercises">
+      <PageLayout title="" backHref={backHref}>
         {null}
       </PageLayout>
     )
   if (exercise === null) {
     return (
-      <PageLayout title={t('tabs.exercises')} backHref="/exercises">
+      <PageLayout title={t('tabs.exercises')} backHref={backHref}>
         <EmptyState message={t('common.notFound')} />
       </PageLayout>
     )
@@ -67,7 +73,7 @@ export default function ExerciseDetailPage() {
   return (
     <PageLayout
       title={exercise.title}
-      backHref="/exercises"
+      backHref={backHref}
       actions={
         <>
           <IonButton aria-label={t('common.edit')} routerLink={`/exercises/${exercise.id}/edit`}>

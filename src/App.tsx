@@ -12,12 +12,14 @@ import { IonReactRouter } from '@ionic/react-router'
 import { barbell, pawOutline, settingsOutline, statsChart } from 'ionicons/icons'
 import { Redirect, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { TAB_BAR_ID } from './components/useAppToast'
 
 import DogDetailPage from './features/dogs/DogDetailPage'
 import DogsPage from './features/dogs/DogsPage'
 import ExerciseDetailPage from './features/exercises/ExerciseDetailPage'
 import ExerciseFormPage from './features/exercises/ExerciseFormPage'
 import ExercisesPage from './features/exercises/ExercisesPage'
+import PlanDetailPage from './features/plans/PlanDetailPage'
 import ProgressPage from './features/stats/ProgressPage'
 import SettingsPage from './features/settings/SettingsPage'
 
@@ -46,6 +48,16 @@ export default function App() {
           <IonRouterOutlet>
             <Route exact path="/dogs" component={DogsPage} />
             <Route exact path={`/dogs/:dogId(${ID})`} component={DogDetailPage} />
+            <Route
+              exact
+              path={`/dogs/:dogId(${ID})/plans/:planId(${ID})`}
+              component={PlanDetailPage}
+            />
+            <Route
+              exact
+              path={`/dogs/:dogId(${ID})/plans/:planId(${ID})/exercises/:exerciseId(${ID})`}
+              component={ExerciseDetailPage}
+            />
             <Route exact path="/exercises" component={ExercisesPage} />
             <Route exact path="/exercises/new" component={ExerciseFormPage} />
             <Route exact path={`/exercises/:exerciseId(${ID})`} component={ExerciseDetailPage} />
@@ -56,7 +68,7 @@ export default function App() {
               <Redirect to="/dogs" />
             </Route>
           </IonRouterOutlet>
-          <IonTabBar slot="bottom">
+          <IonTabBar slot="bottom" id={TAB_BAR_ID}>
             <IonTabButton tab="dogs" href="/dogs">
               <IonIcon aria-hidden icon={pawOutline} />
               <IonLabel>{t('tabs.dogs')}</IonLabel>

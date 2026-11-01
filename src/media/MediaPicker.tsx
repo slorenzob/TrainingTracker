@@ -1,7 +1,8 @@
-import { IonButton, IonIcon, useIonAlert, useIonToast } from '@ionic/react'
+import { IonButton, IonIcon, useIonAlert } from '@ionic/react'
 import { cameraOutline } from 'ionicons/icons'
 import { useRef, type ChangeEvent, type ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAppToast } from '../components/useAppToast'
 import { formatBytes } from './storage'
 
 /** Files above this size ask for confirmation before being copied into the app. */
@@ -29,7 +30,7 @@ export default function MediaPicker({
   const { t } = useTranslation()
   const input = useRef<HTMLInputElement>(null)
   const [presentAlert] = useIonAlert()
-  const [presentToast] = useIonToast()
+  const presentToast = useAppToast()
 
   const confirmLarge = (file: File) =>
     new Promise<boolean>((resolve) => {

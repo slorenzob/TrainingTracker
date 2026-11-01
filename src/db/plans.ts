@@ -81,24 +81,42 @@ export async function getPlanExercises(
   return rows.map((row, i) => ({ ...row, exercise: exercises[i]! }))
 }
 
-/** Adds an exercise at the end of the plan (or restores it if it had been archived). */
-export async function addExerciseToPlan(planId: string, exerciseId: string): Promise<PlanExercise> {
+/**
+ * Appends exercises to the plan in the given order. Exercises already active are left
+ * where they are; archived ones are restored at the end.
+ */
+export async function addExercisesToPlan(
+  planId: string,
+  exerciseIds: readonly string[],
+): Promise<PlanExercise[]> {
   return db.transaction('rw', [db.plans, db.exercises, db.planExercises], async () => {
     await requirePlan(planId)
-    await requireExercises([exerciseId])
+    await requireExercises(exerciseIds)
     const rows = await db.planExercises.where('planId').equals(planId).toArray()
-    const order = rows.reduce((max, r) => Math.max(max, r.order + 1), 0)
-    const existing = rows.find((r) => r.exerciseId === exerciseId)
-    if (existing) {
-      if (!existing.archived) return existing
-      const restored = { ...existing, archived: false, order }
-      await db.planExercises.put(restored)
-      return restored
+    const byExercise = new Map(rows.map((r) => [r.exerciseId, r]))
+    let order = rows.reduce((max, r) => Math.max(max, r.order + 1), 0)
+    const result: PlanExercise[] = []
+    for (const exerciseId of exerciseIds) {
+      const existing = byExercise.get(exerciseId)
+      let row: PlanExercise
+      if (existing && !existing.archived) {
+        row = existing
+      } else {
+        row = existing
+          ? { ...existing, archived: false, order: order++ }
+          : { id: newId(), planId, exerciseId, order: order++, archived: false }
+        await db.planExercises.put(row)
+        byExercise.set(exerciseId, row)
+      }
+      result.push(row)
     }
-    const row: PlanExercise = { id: newId(), planId, exerciseId, order, archived: false }
-    await db.planExercises.add(row)
-    return row
+    return result
   })
+}
+
+export async function addExerciseToPlan(planId: string, exerciseId: string): Promise<PlanExercise> {
+  const [row] = await addExercisesToPlan(planId, [exerciseId])
+  return row
 }
 
 /**

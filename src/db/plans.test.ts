@@ -3,6 +3,7 @@ import { makeDog, makeExercise } from '../test/factories'
 import { EntityNotFoundError, ValidationError } from './errors'
 import {
   addExerciseToPlan,
+  addExercisesToPlan,
   createPlan,
   deletePlan,
   duplicatePlan,
@@ -63,6 +64,31 @@ describe('plans', () => {
     await addExerciseToPlan(plan.id, come.id)
     await addExerciseToPlan(plan.id, come.id)
     expect(await titles(plan.id)).toEqual(['Sentado', 'Llamada'])
+  })
+
+  it('appends several exercises in the given order, restoring archived ones', async () => {
+    const plan = await createPlan(dog.id, { name: 'P', startDate: '2026-10-01' }, [sit.id, stay.id])
+    const [peSit] = await getPlanExercises(plan.id)
+    await createSession(plan.id, {
+      date: '2026-10-02',
+      comment: '',
+      results: [{ planExerciseId: peSit.id, stars: 3 }],
+    })
+    await removeExerciseFromPlan(peSit.id)
+
+    const rows = await addExercisesToPlan(plan.id, [come.id, stay.id, sit.id])
+
+    expect(rows.map((r) => r.exerciseId)).toEqual([come.id, stay.id, sit.id])
+    expect(rows[2].id).toBe(peSit.id)
+    expect(await titles(plan.id)).toEqual(['Quieto', 'Llamada', 'Sentado'])
+  })
+
+  it('adds nothing if any exercise does not exist', async () => {
+    const plan = await createPlan(dog.id, { name: 'P', startDate: '2026-10-01' })
+    await expect(addExercisesToPlan(plan.id, [sit.id, 'nope'])).rejects.toBeInstanceOf(
+      EntityNotFoundError,
+    )
+    expect(await titles(plan.id)).toEqual([])
   })
 
   it('deletes unrated exercises but archives rated ones, and can restore them', async () => {

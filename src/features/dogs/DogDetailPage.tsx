@@ -1,18 +1,11 @@
-import {
-  IonButton,
-  IonIcon,
-  IonList,
-  IonListHeader,
-  IonLabel,
-  useIonAlert,
-  useIonRouter,
-} from '@ionic/react'
+import { IonButton, IonIcon, useIonAlert, useIonRouter } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { createOutline, trashOutline } from 'ionicons/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import EmptyState from '../../components/EmptyState'
+import DogPlansList from '../plans/DogPlansList'
 import PageLayout from '../../components/PageLayout'
 import { deleteDog, getDog } from '../../db/dogs'
 import { formatDate } from '../../i18n/format'
@@ -85,12 +78,7 @@ export default function DogDetailPage() {
           <p className="ion-no-margin">{t('dogs.born', { date: formatDate(dog.birthDate) })}</p>
         )}
       </div>
-      <IonList inset>
-        <IonListHeader>
-          <IonLabel>{t('dogs.plans')}</IonLabel>
-        </IonListHeader>
-      </IonList>
-      <EmptyState message={t('dogs.plansSoon', { name: dog.name })} />
+      <DogPlansList dog={dog} />
       <DogFormModal isOpen={editing} dog={dog} onDismiss={() => setEditing(false)} />
     </PageLayout>
   )

@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest'
 import App from './App'
 import { createDog } from './db/dogs'
 import { createExercise } from './db/exercises'
+import { createPlan, finishPlan, getPlanExercises, removeExerciseFromPlan } from './db/plans'
+import { createSession } from './db/sessions'
 
 const renderAt = (path: string) => {
   window.history.pushState({}, '', path)
@@ -47,5 +49,49 @@ describe('App', () => {
   it('shows "not found" for an unknown dog', async () => {
     renderAt('/dogs/00000000-0000-0000-0000-000000000000')
     expect(await screen.findByText('No se ha encontrado.')).toBeInTheDocument()
+  })
+})
+
+describe('plans', () => {
+  it('lists a dog’s plans, active first, with their exercise count', async () => {
+    const dog = await createDog({ name: 'Luna' })
+    const exercise = await createExercise({
+      title: 'Sentado',
+      description: '',
+      links: [],
+      media: [],
+    })
+    const old = await createPlan(dog.id, { name: 'Plan viejo', startDate: '2026-12-01' })
+    await finishPlan(old.id, '2026-12-31')
+    await createPlan(dog.id, { name: 'Plan actual', startDate: '2026-01-01' }, [exercise.id])
+
+    renderAt(`/dogs/${dog.id}`)
+    const items = await screen.findAllByRole('heading', { level: 2 })
+    expect(items.map((h) => h.textContent)).toEqual(['Plan actual', 'Plan viejo'])
+    expect(screen.getByText('1 ejercicio')).toBeInTheDocument()
+    expect(screen.getByText('Finalizado')).toBeInTheDocument()
+  })
+
+  it('shows active and archived exercises of a plan', async () => {
+    const dog = await createDog({ name: 'Luna' })
+    const sit = await createExercise({ title: 'Sentado', description: '', links: [], media: [] })
+    const stay = await createExercise({ title: 'Quieto', description: '', links: [], media: [] })
+    const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, [
+      sit.id,
+      stay.id,
+    ])
+    const [peSit] = await getPlanExercises(plan.id)
+    await createSession(plan.id, {
+      date: '2026-10-02',
+      comment: '',
+      results: [{ planExerciseId: peSit.id, stars: 4 }],
+    })
+    await removeExerciseFromPlan(peSit.id)
+
+    renderAt(`/dogs/${dog.id}/plans/${plan.id}`)
+    expect(await screen.findByText('Ejercicios retirados')).toBeInTheDocument()
+    expect(screen.getByText('Quieto')).toBeInTheDocument()
+    expect(screen.getByText('Sentado')).toBeInTheDocument()
+    expect(screen.getByText('Restaurar')).toBeInTheDocument()
   })
 })

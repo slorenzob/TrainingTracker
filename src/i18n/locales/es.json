@@ -18,7 +18,10 @@
     "close": "Cerrar",
     "remove": "Quitar",
     "optional": "opcional",
-    "notFound": "No se ha encontrado."
+    "notFound": "No se ha encontrado.",
+    "more": "Más opciones",
+    "restore": "Restaurar",
+    "done": "Hecho"
   },
   "media": {
     "add": "Añadir foto o vídeo",
@@ -40,10 +43,11 @@
     "birthDate": "Fecha de nacimiento",
     "born": "Nació el {{date}}",
     "plans": "Planes de entrenamiento",
-    "plansSoon": "Aquí aparecerán los planes de entrenamiento de {{name}}.",
     "deleteTitle": "¿Eliminar a {{name}}?",
     "deleteMessage": "Se borrarán también todos sus planes, sesiones y puntuaciones. Esta acción no se puede deshacer.",
-    "nameRequired": "El nombre es obligatorio."
+    "nameRequired": "El nombre es obligatorio.",
+    "noPlans": "{{name}} todavía no tiene planes de entrenamiento.",
+    "newPlan": "Nuevo plan"
   },
   "exercises": {
     "empty": "La biblioteca de ejercicios está vacía.",
@@ -73,5 +77,43 @@
     "storageUsage": "{{used}} usados de {{quota}}",
     "persisted": "Almacenamiento persistente activado",
     "notPersisted": "El navegador podría borrar los datos si falta espacio. Instala la app para protegerlos."
+  },
+  "plans": {
+    "new": "Nuevo plan",
+    "editTitle": "Editar plan",
+    "name": "Nombre del plan",
+    "startDate": "Fecha de inicio",
+    "notes": "Notas",
+    "nameRequired": "El nombre es obligatorio.",
+    "active": "Activo",
+    "finished": "Finalizado",
+    "since": "Desde el {{date}}",
+    "range": "Del {{start}} al {{end}}",
+    "exerciseCount_one": "{{count}} ejercicio",
+    "exerciseCount_other": "{{count}} ejercicios",
+    "exercises": "Ejercicios",
+    "noExercises": "Este plan todavía no tiene ejercicios.",
+    "addExercises": "Añadir ejercicios",
+    "reorder": "Ordenar",
+    "archived": "Ejercicios retirados",
+    "archivedHelp": "Se quitaron del plan, pero se conservan porque tienen puntuaciones en alguna sesión.",
+    "removed": "Ejercicio quitado del plan.",
+    "archivedToast": "Ejercicio retirado. Sus puntuaciones se conservan.",
+    "sessions": "Sesiones",
+    "sessionsSoon": "Aquí aparecerán las sesiones de este plan.",
+    "duplicate": "Duplicar plan",
+    "duplicateTitle": "Duplicar plan",
+    "duplicateFor": "Para",
+    "duplicateName": "{{name}} (copia)",
+    "duplicateHelp": "Se copian los ejercicios del plan, no sus sesiones.",
+    "finish": "Finalizar plan",
+    "reopen": "Reabrir plan",
+    "delete": "Eliminar plan",
+    "deleteTitle": "¿Eliminar «{{name}}»?",
+    "deleteMessage": "Se borrarán también sus sesiones y puntuaciones. Los ejercicios seguirán en la biblioteca.",
+    "pickerTitle": "Añadir ejercicios",
+    "pickerEmpty": "No hay más ejercicios en la biblioteca. Créalos en la pestaña Ejercicios.",
+    "pickerAdd_one": "Añadir {{count}}",
+    "pickerAdd_other": "Añadir {{count}}"
   }
 }

@@ -84,30 +84,3 @@ export async function exportBackup(): Promise<ExportResult> {
     missingMedia,
   }
 }
-
-/**
- * Offers the file through the share sheet where supported (lets the user save it to Files,
- * Drive, etc. on mobile), falling back to a regular download.
- */
-export async function saveBackupFile({
-  blob,
-  fileName,
-}: ExportResult): Promise<'shared' | 'downloaded' | 'cancelled'> {
-  const file = new File([blob], fileName, { type: 'application/zip' })
-  if (navigator.canShare?.({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], title: fileName })
-      return 'shared'
-    } catch (e) {
-      // Closing the share sheet is a choice, not an error; anything else falls back.
-      if ((e as DOMException).name === 'AbortError') return 'cancelled'
-    }
-  }
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = fileName
-  link.click()
-  setTimeout(() => URL.revokeObjectURL(url), 60_000)
-  return 'downloaded'
-}

@@ -4,7 +4,10 @@ import App from './App'
 import { createDog } from './db/dogs'
 import { createExercise } from './db/exercises'
 import { createPlan, finishPlan, getPlanExercises, removeExerciseFromPlan } from './db/plans'
+import { createReminder } from './db/reminders'
 import { createSession } from './db/sessions'
+import type { Weekday } from './db/types'
+import { todayIso } from './db/utils'
 
 const renderAt = (path: string) => {
   window.history.pushState({}, '', path)
@@ -158,5 +161,38 @@ describe('progress', () => {
       await screen.findByRole('img', { name: /Evolución de las estrellas de Llamada con Toby/ }),
     ).toBeInTheDocument()
     expect(screen.getByRole('img', { name: '10 oct 2026: 4 estrellas' })).toBeInTheDocument()
+  })
+})
+
+describe('reminders', () => {
+  it('shows today’s reminder on the dogs tab until a session is recorded', async () => {
+    const dog = await createDog({ name: 'Toby' })
+    const exercise = await createExercise({
+      title: 'Llamada',
+      description: '',
+      links: [],
+      media: [],
+    })
+    const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, [
+      exercise.id,
+    ])
+    const today = new Date().getDay() as Weekday
+    await createReminder({ dogId: dog.id, weekdays: [today], time: '18:00', enabled: true })
+
+    const { unmount } = renderAt('/dogs')
+    expect(await screen.findByText('Hoy toca entrenar con Toby')).toBeInTheDocument()
+    // Its link target lives in the web component's shadow DOM; checked in the browser.
+    expect(screen.getByText('Registrar sesión')).toBeInTheDocument()
+    unmount()
+
+    const [pe] = await getPlanExercises(plan.id)
+    await createSession(plan.id, {
+      date: todayIso(),
+      comment: '',
+      results: [{ planExerciseId: pe.id, stars: 4 }],
+    })
+    renderAt('/dogs')
+    await screen.findAllByText('Toby')
+    expect(screen.queryByText('Hoy toca entrenar con Toby')).not.toBeInTheDocument()
   })
 })

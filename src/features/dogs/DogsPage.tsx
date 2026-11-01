@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import EmptyState from '../../components/EmptyState'
 import PageLayout from '../../components/PageLayout'
 import { listDogs } from '../../db/dogs'
+import TodayReminderBanner from '../reminders/TodayReminderBanner'
 import DogAvatar from './DogAvatar'
 import DogFormModal from './DogFormModal'
 
@@ -25,6 +26,7 @@ export default function DogsPage() {
         </IonFab>
       }
     >
+      <TodayReminderBanner />
       {dogs?.length === 0 && <EmptyState message={t('dogs.empty')} />}
       {dogs && dogs.length > 0 && (
         <IonList>

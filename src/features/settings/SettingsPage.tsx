@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import type { BackupError, ParsedBackup } from '../../backup/import'
 import { BACKUP_REMINDER_DAYS, markBackupDone, useLastBackupAt } from '../../backup/lastBackup'
 import PageLayout from '../../components/PageLayout'
+import { saveFile } from '../../components/saveFile'
 import { useAppToast } from '../../components/useAppToast'
 import { formatDate } from '../../i18n/format'
 import {
@@ -24,6 +25,7 @@ import {
   requestPersistence,
   type StorageStatus,
 } from '../../media/storage'
+import RemindersSection from '../reminders/RemindersSection'
 import { useBackupDue } from './useBackupDue'
 import './settings.css'
 
@@ -57,9 +59,9 @@ export default function SettingsPage() {
   const exportData = async () => {
     setBusy('exporting')
     try {
-      const { exportBackup, saveBackupFile } = await import('../../backup/export')
+      const { exportBackup } = await import('../../backup/export')
       const result = await exportBackup()
-      const outcome = await saveBackupFile(result)
+      const outcome = await saveFile(result.blob, result.fileName)
       if (outcome === 'cancelled') return
       markBackupDone()
       const message =
@@ -133,6 +135,7 @@ export default function SettingsPage() {
 
   return (
     <PageLayout title={t('tabs.settings')}>
+      <RemindersSection />
       <IonList inset>
         <IonListHeader>
           <IonLabel>{t('settings.backup')}</IonLabel>

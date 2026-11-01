@@ -6,8 +6,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Relative base so the build works under any hosting path (e.g. GitHub Pages).
-  base: './',
+  // Served from the domain root (Cloudflare Pages). Absolute asset paths keep deep links
+  // like /dogs/<id> working on reload; a relative base would resolve them under /dogs/.
+  base: '/',
   plugins: [
     react(),
     // `npm run dev:lan`: self-signed HTTPS so phones on the local network get a secure
@@ -24,7 +25,8 @@ export default defineConfig(({ mode }) => ({
         theme_color: '#3880ff',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '.',
+        start_url: '/',
+        scope: '/',
         icons: [
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },

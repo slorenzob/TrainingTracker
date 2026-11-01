@@ -1,30 +1,41 @@
 .star-rating {
   display: inline-flex;
   align-items: center;
-  color: var(--ion-color-warning);
+  color: var(--tt-star);
+}
+
+/* Empty stars use the control outline, so a 3 reads as three amber stars, not five. */
+.star-rating__off {
+  color: var(--tt-outline);
 }
 
 .star-rating--small {
-  gap: 1px;
+  gap: 2px;
   font-size: 1rem;
 }
 
 .star-rating--large {
   gap: 2px;
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 .star-rating__star {
   display: flex;
-  /* Comfortable touch target while out in the park. */
-  min-width: 44px;
-  min-height: 44px;
+  /* Comfortable touch target while out in the park, one-handed. */
+  min-width: var(--tt-touch-target);
+  min-height: var(--tt-touch-target);
   align-items: center;
   justify-content: center;
   padding: 0;
   border: 0;
+  border-radius: 50%;
   background: none;
   color: inherit;
   font-size: inherit;
   cursor: pointer;
+}
+
+.star-rating__star:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
 }

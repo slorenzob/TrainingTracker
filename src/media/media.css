@@ -5,8 +5,8 @@
   justify-content: center;
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: 8px;
-  background: var(--ion-background-color-step-100, var(--ion-color-step-100, #e0e0e0));
+  border-radius: var(--tt-radius-md);
+  background: var(--tt-surface-sunken);
 }
 
 .media-thumb img,

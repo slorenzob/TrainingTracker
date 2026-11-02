@@ -4,7 +4,9 @@ import { Redirect, Route } from 'react-router-dom'
 import AppTabBar from './components/AppTabBar'
 
 import DogDetailPage from './features/dogs/DogDetailPage'
+import ActiveSessionPage from './features/home/ActiveSessionPage'
 import HomePage from './features/home/HomePage'
+import StartSessionPage from './features/home/StartSessionPage'
 import DogsPage from './features/dogs/DogsPage'
 import ExerciseDetailPage from './features/exercises/ExerciseDetailPage'
 import ExerciseFormPage from './features/exercises/ExerciseFormPage'
@@ -40,6 +42,8 @@ export default function App() {
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/home" component={HomePage} />
+            <Route exact path="/home/start" component={StartSessionPage} />
+            <Route exact path="/home/session" component={ActiveSessionPage} />
             <Route exact path="/dogs" component={DogsPage} />
             <Route exact path={`/dogs/:dogId(${ID})`} component={DogDetailPage} />
             <Route

@@ -1,11 +1,8 @@
 import type { PlanExerciseWithDetails } from '../../db/plans'
 import type { SessionInput } from '../../db/sessions'
-import type { SessionResult } from '../../db/types'
+import type { RatingDraft, SessionResult } from '../../db/types'
 
-export interface RatingDraft {
-  stars?: number
-  note: string
-}
+export type { RatingDraft }
 
 /** Draft ratings keyed by PlanExercise id. */
 export type RatingsDraft = Record<string, RatingDraft>

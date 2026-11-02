@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formatBytes } from '../media/storage'
-import { formatDate, normalizeForSearch, parseIsoDate } from './format'
+import { formatDate, formatDuration, formatTimer, normalizeForSearch, parseIsoDate } from './format'
 
 describe('format helpers', () => {
   it('parses ISO dates as local calendar days', () => {
@@ -20,5 +20,14 @@ describe('format helpers', () => {
     expect(formatBytes(0)).toBe('0 B')
     expect(formatBytes(1536)).toBe('1,5 KB')
     expect(formatBytes(150 * 1024 * 1024)).toBe('150 MB')
+  })
+
+  it('formats the running timer and saved durations', () => {
+    expect(formatTimer(0)).toBe('0:00')
+    expect(formatTimer(65_400)).toBe('1:05')
+    expect(formatTimer(3_723_000)).toBe('1:02:03')
+    expect(formatDuration(45)).toBe('45 s')
+    expect(formatDuration(25 * 60)).toBe('25 min')
+    expect(formatDuration(65 * 60)).toBe('1 h 05 min')
   })
 })

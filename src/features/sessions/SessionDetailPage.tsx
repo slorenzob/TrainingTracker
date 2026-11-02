@@ -19,7 +19,7 @@ import PageLayout from '../../components/PageLayout'
 import StarRating from '../../components/StarRating'
 import { getPlanExercises } from '../../db/plans'
 import { deleteSession, getSession } from '../../db/sessions'
-import { formatDate } from '../../i18n/format'
+import { formatDate, formatDuration } from '../../i18n/format'
 import './sessions.css'
 
 async function loadSession(planId: string, sessionId: string) {
@@ -106,6 +106,13 @@ export default function SessionDetailPage() {
     >
       <div className="ion-padding">
         <h1 className="ion-no-margin">{title}</h1>
+        {session.durationSeconds !== undefined && (
+          <IonText color="medium">
+            <p className="ion-no-margin">
+              {t('sessions.duration', { duration: formatDuration(session.durationSeconds) })}
+            </p>
+          </IonText>
+        )}
         <IonText color={session.comment ? undefined : 'medium'}>
           <p className="session-comment">{session.comment || t('sessions.noComment')}</p>
         </IonText>

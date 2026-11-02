@@ -39,7 +39,15 @@ export async function deleteDog(id: string): Promise<void> {
   let photo: MediaRef | undefined
   await db.transaction(
     'rw',
-    [db.dogs, db.plans, db.planExercises, db.sessions, db.sessionResults, db.reminders],
+    [
+      db.dogs,
+      db.plans,
+      db.planExercises,
+      db.sessions,
+      db.sessionResults,
+      db.reminders,
+      db.activeSessions,
+    ],
     async () => {
       const dog = await db.dogs.get(id)
       if (!dog) throw new EntityNotFoundError('Dog', id)
@@ -51,6 +59,7 @@ export async function deleteDog(id: string): Promise<void> {
       await db.planExercises.where('planId').anyOf(planIds).delete()
       await db.plans.bulkDelete(planIds)
       await db.reminders.where('dogId').equals(id).delete()
+      await db.activeSessions.filter((a) => a.dogId === id).delete()
       await db.dogs.delete(id)
     },
   )

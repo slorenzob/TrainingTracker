@@ -13,6 +13,8 @@ export interface SessionInput {
   date: string
   comment: string
   results: SessionResultInput[]
+  /** Only set when the session was timed; editing keeps the stored value. */
+  durationSeconds?: number
 }
 
 export interface SessionWithResults extends Session {
@@ -64,6 +66,9 @@ export async function createSession(
       dogId: plan.dogId,
       date: input.date,
       comment: input.comment.trim(),
+      ...(input.durationSeconds !== undefined
+        ? { durationSeconds: Math.max(0, Math.round(input.durationSeconds)) }
+        : {}),
       createdAt: nowIso(),
     }
     const results = await buildResults(planId, session.id, input.results)

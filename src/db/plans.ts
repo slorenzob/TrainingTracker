@@ -194,9 +194,10 @@ export async function reopenPlan(id: string): Promise<Plan> {
 export async function deletePlan(id: string): Promise<void> {
   await db.transaction(
     'rw',
-    [db.plans, db.planExercises, db.sessions, db.sessionResults],
+    [db.plans, db.planExercises, db.sessions, db.sessionResults, db.activeSessions],
     async () => {
       await requirePlan(id)
+      await db.activeSessions.filter((a) => a.planId === id).delete()
       const sessionIds = await db.sessions.where('planId').equals(id).primaryKeys()
       await db.sessionResults.where('sessionId').anyOf(sessionIds).delete()
       await db.sessions.bulkDelete(sessionIds)

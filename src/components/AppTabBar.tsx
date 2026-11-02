@@ -1,5 +1,5 @@
 import { IonBadge, IonIcon, IonLabel, IonTabBar, IonTabButton } from '@ionic/react'
-import { barbell, pawOutline, settingsOutline, statsChart } from 'ionicons/icons'
+import { barbell, homeOutline, pawOutline, settingsOutline, statsChart } from 'ionicons/icons'
 import type { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBackupDue } from '../features/settings/useBackupDue'
@@ -11,6 +11,10 @@ function AppTabBar(props: ComponentProps<typeof IonTabBar>) {
   const backupDue = useBackupDue()
   return (
     <IonTabBar slot="bottom" id={TAB_BAR_ID} {...props}>
+      <IonTabButton tab="home" href="/home">
+        <IonIcon aria-hidden icon={homeOutline} />
+        <IonLabel>{t('tabs.home')}</IonLabel>
+      </IonTabButton>
       <IonTabButton tab="dogs" href="/dogs">
         <IonIcon aria-hidden icon={pawOutline} />
         <IonLabel>{t('tabs.dogs')}</IonLabel>

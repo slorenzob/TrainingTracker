@@ -3,6 +3,7 @@
     "name": "Training Tracker"
   },
   "tabs": {
+    "home": "Inicio",
     "dogs": "Perros",
     "exercises": "Ejercicios",
     "progress": "Progreso",

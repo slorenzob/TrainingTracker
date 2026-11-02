@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import App from './App'
 import { createDog } from './db/dogs'
@@ -17,9 +17,10 @@ const renderAt = (path: string) => {
 afterEach(() => window.history.pushState({}, '', '/'))
 
 describe('App', () => {
-  it('renders the tab bar in Spanish', async () => {
+  it('opens on the home tab and renders the tab bar in Spanish', async () => {
     renderAt('/')
-    for (const label of ['Perros', 'Ejercicios', 'Progreso', 'Ajustes']) {
+    await waitFor(() => expect(window.location.pathname).toBe('/home'))
+    for (const label of ['Inicio', 'Perros', 'Ejercicios', 'Progreso', 'Ajustes']) {
       expect((await screen.findAllByText(label)).length).toBeGreaterThan(0)
     }
   })

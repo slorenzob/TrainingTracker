@@ -73,6 +73,17 @@ export default function ExerciseFormPage() {
     setErrors((e) => ({ ...e, invalidLinkKeys: e.invalidLinkKeys.filter((k) => k !== key) }))
   }
 
+  /**
+   * After saving, show the library list. A new exercise opened from the list just goes
+   * back. An edit navigates back to the list over the detail page: Ionic can only step
+   * back once, so the detail stays in the browser history (the form's own back arrow
+   * still returns to the detail, by design).
+   */
+  const returnToList = () => {
+    if (!isEdit && router.routeInfo.lastPathname === '/exercises') router.goBack()
+    else router.push('/exercises', 'back', 'pop')
+  }
+
   const save = async () => {
     const result = validateExerciseForm(title, links)
     setErrors(result.errors)
@@ -85,15 +96,10 @@ export default function ExerciseFormPage() {
         links: result.links,
         media: draft.media,
       }
-      if (isEdit) {
-        await updateExercise(exerciseId, input)
-        draft.commit()
-        router.goBack()
-      } else {
-        const created = await createExercise(input)
-        draft.commit()
-        router.push(`/exercises/${created.id}`, 'forward', 'replace')
-      }
+      if (isEdit) await updateExercise(exerciseId, input)
+      else await createExercise(input)
+      draft.commit()
+      returnToList()
     } finally {
       setSaving(false)
     }

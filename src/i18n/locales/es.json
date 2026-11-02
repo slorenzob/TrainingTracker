@@ -195,12 +195,13 @@
     "notDone": "No realizado",
     "archivedExercise": "Retirado del plan",
     "needOneRating": "Puntúa al menos un ejercicio.",
-    "done_one": "{{count}} de {{total}} ejercicio",
-    "done_other": "{{count}} de {{total}} ejercicios",
+    "done_one": "{{done}} de {{count}} ejercicio",
+    "done_other": "{{done}} de {{count}} ejercicios",
     "average": "Media {{value}}",
     "deleteTitle": "¿Eliminar esta sesión?",
     "deleteMessage": "Se borrarán sus puntuaciones y notas.",
-    "saved": "Sesión guardada."
+    "saved": "Sesión guardada.",
+    "duration": "Duración: {{duration}}"
   },
   "stars": {
     "label": "Puntuación",
@@ -252,5 +253,42 @@
     "dueTodayAt": "Recordatorio de las {{time}}.",
     "recordSession": "Registrar sesión",
     "dismiss": "Ocultar hasta mañana"
+  },
+  "home": {
+    "startSession": "Empezar sesión",
+    "activeSession": "Sesión en curso",
+    "activeWith": "{{dog}} · {{plan}}",
+    "continue": "Continuar sesión",
+    "discard": "Descartar"
+  },
+  "start": {
+    "title": "Nueva sesión",
+    "step": "Paso {{current}} de {{total}}",
+    "chooseDog": "¿Quién entrena hoy?",
+    "choosePlan": "Plan para {{dog}}",
+    "changeDog": "Cambiar de perro",
+    "lastUsed": "Último usado",
+    "start": "Empezar sesión",
+    "noDogs": "Añade un perro para empezar a entrenar.",
+    "goToDogs": "Ir a Perros",
+    "noPlans": "{{dog}} no tiene planes activos. Crea uno en su ficha.",
+    "goToDog": "Ir a la ficha de {{dog}}",
+    "emptyPlan": "Este plan no tiene ejercicios."
+  },
+  "active": {
+    "title": "Sesión en curso",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "paused": "En pausa",
+    "timer": "Tiempo de entrenamiento",
+    "showInfo": "Ver explicación de {{title}}",
+    "hideInfo": "Ocultar explicación de {{title}}",
+    "finish": "Terminar sesión",
+    "discard": "Descartar sesión",
+    "discardTitle": "¿Descartar la sesión?",
+    "discardMessage": "Se perderán las puntuaciones y notas de esta sesión.",
+    "saved": "Sesión guardada ({{duration}}).",
+    "none": "No hay ninguna sesión en curso.",
+    "gone": "El perro o el plan de la sesión ya no existen; se ha descartado."
   }
 }

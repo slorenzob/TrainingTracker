@@ -63,6 +63,7 @@ const session = z.object({
   dogId: id,
   date: isoDate,
   comment: z.string(),
+  durationSeconds: z.number().int().nonnegative().optional(),
   createdAt: isoDateTime,
 })
 

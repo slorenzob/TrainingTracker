@@ -68,7 +68,35 @@ export interface Session {
   dogId: string
   date: IsoDate
   comment: string
+  /** Time trained, measured by the in-progress session timer; absent for sessions entered by hand. */
+  durationSeconds?: number
   createdAt: IsoDateTime
+}
+
+/** Draft rating of one exercise while a session is being recorded. */
+export interface RatingDraft {
+  stars?: number
+  note: string
+}
+
+/**
+ * The session currently being trained, saved on every change so it survives the app being
+ * closed. There is at most one; it becomes a Session when finished.
+ */
+export interface ActiveSession {
+  id: 'current'
+  dogId: string
+  planId: string
+  /** Day the session started; becomes the session date. */
+  date: IsoDate
+  startedAt: IsoDateTime
+  /** Time accumulated in previous runs of the timer. */
+  elapsedMs: number
+  /** When the timer was last started; absent while paused. */
+  runningSince?: IsoDateTime
+  /** Keyed by PlanExercise id. */
+  ratings: Record<string, RatingDraft>
+  comment: string
 }
 
 export type Stars = 1 | 2 | 3 | 4 | 5

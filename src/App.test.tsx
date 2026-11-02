@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import App from './App'
+import { startActiveSession } from './db/activeSession'
 import { createDog } from './db/dogs'
 import { createExercise } from './db/exercises'
 import { createPlan, finishPlan, getPlanExercises, removeExerciseFromPlan } from './db/plans'
@@ -195,5 +196,39 @@ describe('reminders', () => {
     renderAt('/dogs')
     await screen.findAllByText('Toby')
     expect(screen.queryByText('Hoy toca entrenar con Toby')).not.toBeInTheDocument()
+  })
+})
+
+describe('starting a session from home', () => {
+  it('skips the dog step with a single dog, preselects the plan and resumes after reload', async () => {
+    const dog = await createDog({ name: 'Toby' })
+    const exercise = await createExercise({
+      title: 'Llamada',
+      description: '',
+      links: [],
+      media: [],
+    })
+    const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, [
+      exercise.id,
+    ])
+
+    const { unmount } = renderAt('/home/start')
+    expect(await screen.findByText('Plan para Toby')).toBeInTheDocument()
+    expect(screen.queryByText(/^Paso/)).not.toBeInTheDocument()
+    expect(screen.queryByText('¿Quién entrena hoy?')).not.toBeInTheDocument()
+    unmount()
+
+    await startActiveSession(dog.id, plan.id)
+    renderAt('/home')
+    expect(await screen.findByText('Continuar sesión')).toBeInTheDocument()
+    expect(screen.getByText('Toby · Básico')).toBeInTheDocument()
+  })
+
+  it('asks for the dog first when there are several', async () => {
+    await createDog({ name: 'Luna' })
+    await createDog({ name: 'Toby' })
+    renderAt('/home/start')
+    expect(await screen.findByText('¿Quién entrena hoy?')).toBeInTheDocument()
+    expect(screen.getByText('Paso 1 de 2')).toBeInTheDocument()
   })
 })

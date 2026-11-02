@@ -1,5 +1,14 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Dog, Exercise, Plan, PlanExercise, Reminder, Session, SessionResult } from './types'
+import type {
+  ActiveSession,
+  Dog,
+  Exercise,
+  Plan,
+  PlanExercise,
+  Reminder,
+  Session,
+  SessionResult,
+} from './types'
 
 export const DB_NAME = 'training-tracker'
 
@@ -11,6 +20,7 @@ export class TrainingDb extends Dexie {
   sessions!: EntityTable<Session, 'id'>
   sessionResults!: EntityTable<SessionResult, 'id'>
   reminders!: EntityTable<Reminder, 'id'>
+  activeSessions!: EntityTable<ActiveSession, 'id'>
 
   constructor(name = DB_NAME) {
     super(name)
@@ -23,6 +33,8 @@ export class TrainingDb extends Dexie {
       sessionResults: 'id, sessionId, planExerciseId, exerciseId',
       reminders: 'id, dogId',
     })
+    // v2: the in-progress session. Sessions also gain an optional, unindexed durationSeconds.
+    this.version(2).stores({ activeSessions: 'id' })
   }
 }
 

@@ -28,6 +28,7 @@ import '@ionic/react/css/display.css'
 import '@ionic/react/css/palettes/dark.system.css'
 import '@fontsource-variable/atkinson-hyperlegible-next'
 import './theme/variables.css'
+import './theme/viewport.css'
 
 setupIonicReact()
 

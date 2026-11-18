@@ -6,6 +6,8 @@ import {
   IonList,
   IonListHeader,
   IonNote,
+  IonRadio,
+  IonRadioGroup,
   IonSpinner,
   useIonAlert,
 } from '@ionic/react'
@@ -25,6 +27,12 @@ import {
   requestPersistence,
   type StorageStatus,
 } from '../../media/storage'
+import {
+  COLOR_SCHEMES,
+  setColorScheme,
+  useColorScheme,
+  type ColorScheme,
+} from '../../theme/colorScheme'
 import RemindersSection from '../reminders/RemindersSection'
 import { useBackupDue } from './useBackupDue'
 import './settings.css'
@@ -40,6 +48,7 @@ export default function SettingsPage() {
   const fileInput = useRef<HTMLInputElement>(null)
   const lastBackupAt = useLastBackupAt()
   const backupDue = useBackupDue()
+  const colorScheme = useColorScheme()
 
   const refreshStatus = useCallback(() => void getStorageStatus().then(setStatus), [])
   useEffect(refreshStatus, [refreshStatus])
@@ -225,6 +234,27 @@ export default function SettingsPage() {
             )}
           </>
         )}
+      </IonList>
+
+      <IonList inset>
+        <IonListHeader>
+          <IonLabel>{t('settings.appearance')}</IonLabel>
+        </IonListHeader>
+        <IonRadioGroup
+          value={colorScheme}
+          onIonChange={(e) => setColorScheme(e.detail.value as ColorScheme)}
+        >
+          {COLOR_SCHEMES.map((scheme, index) => (
+            <IonItem key={scheme} lines={index === COLOR_SCHEMES.length - 1 ? 'none' : undefined}>
+              <IonRadio value={scheme} justify="space-between">
+                <IonLabel className="ion-text-wrap">
+                  {t(`settings.colorScheme.${scheme}`)}
+                  {scheme === 'system' && <p>{t('settings.colorScheme.systemHelp')}</p>}
+                </IonLabel>
+              </IonRadio>
+            </IonItem>
+          ))}
+        </IonRadioGroup>
       </IonList>
 
       <IonList inset>

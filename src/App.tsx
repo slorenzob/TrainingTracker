@@ -28,9 +28,11 @@ import '@ionic/react/css/display.css'
 import '@ionic/react/css/palettes/dark.system.css'
 import '@fontsource-variable/atkinson-hyperlegible-next'
 import './theme/variables.css'
+import './theme/material3.css'
 import './theme/viewport.css'
 
-setupIonicReact()
+// Material Design 3 on every platform: Ionic's Material mode, restyled in theme/material3.css.
+setupIonicReact({ mode: 'md' })
 
 /** Route param pattern for record ids (UUIDs), so `/exercises/new` never matches `:exerciseId`. */
 const ID = '[0-9a-f-]{36}'

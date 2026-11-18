@@ -24,7 +24,8 @@ export default function PageLayout({ title, children, backHref, actions, fixed }
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        {/* Tab root pages get the large top app bar; pages below them the small one. */}
+        <IonToolbar className={backHref ? undefined : 'app-bar--large'}>
           {backHref && (
             <IonButtons slot="start">
               <IonBackButton defaultHref={backHref} />
@@ -34,14 +35,7 @@ export default function PageLayout({ title, children, backHref, actions, fixed }
           {actions && <IonButtons slot="end">{actions}</IonButtons>}
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        {!backHref && (
-          <IonHeader collapse="condense">
-            <IonToolbar>
-              <IonTitle size="large">{title}</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-        )}
+      <IonContent>
         {children}
         {fixed}
       </IonContent>

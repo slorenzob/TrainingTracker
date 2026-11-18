@@ -7,20 +7,26 @@
 }
 
 .stat-tile {
-  padding: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding: 16px;
   border-radius: var(--tt-radius-lg);
-  background: var(--tt-surface-sunken);
+  background: var(--md-sys-color-surface-container-high);
 }
 
 .stat-tile dt {
+  margin-top: 4px;
   color: var(--tt-ink-muted);
   font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .stat-tile dd {
-  margin: 4px 0 0;
-  font-size: 1.25rem;
-  font-weight: 700;
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.75rem;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
 

@@ -31,7 +31,7 @@ function AppTabBar(props: ComponentProps<typeof IonTabBar>) {
         <IonIcon aria-hidden icon={settingsOutline} />
         <IonLabel>{t('tabs.settings')}</IonLabel>
         {backupDue && (
-          <IonBadge color="warning" aria-label={t('settings.backupDueBadge')}>
+          <IonBadge color="danger" aria-label={t('settings.backupDueBadge')}>
             !
           </IonBadge>
         )}

@@ -1,0 +1,283 @@
+/*
+ * Material Design 3 shapes, sizes and type on top of Ionic's Material ("md") mode, which the app
+ * forces on every platform (see App.tsx). Colours come from the roles in variables.css.
+ * https://m3.material.io/components
+ */
+
+/* Type: M3 type scale. Headline medium for page headings, title large for section titles. */
+ion-content h1 {
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 2.25rem;
+}
+
+ion-content h2 {
+  font-weight: 500;
+}
+
+/* Top app bar: flat surface, no shadow; title large (22px). */
+.header-md {
+  box-shadow: none;
+}
+
+ion-toolbar {
+  --min-height: 64px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+ion-title {
+  font-size: 1.375rem;
+  font-weight: 400;
+}
+
+/* Tab root pages: medium-to-large top app bar with a headline title. */
+.app-bar--large {
+  --min-height: 112px;
+}
+
+.app-bar--large ion-title {
+  padding-top: 40px;
+  padding-inline: 16px;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+}
+
+/* Navigation bar: 80px, active indicator pill behind the icon. */
+ion-tab-bar {
+  height: 80px;
+  border: 0;
+}
+
+ion-tab-button {
+  --padding-top: 12px;
+  --padding-bottom: 16px;
+  --padding-start: 0;
+  --padding-end: 0;
+  /* Ionic's md minimum (80px) makes five tabs overflow a phone. */
+  min-width: 0;
+}
+
+ion-tab-button ion-icon {
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  padding: 4px 20px;
+  border-radius: 16px;
+  transition: background-color 0.2s;
+}
+
+ion-tab-button.tab-selected ion-icon {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+ion-tab-button ion-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+ion-tab-button.tab-selected ion-label {
+  font-weight: 700;
+}
+
+ion-tab-button ion-badge {
+  top: 10px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 0.6875rem;
+  line-height: 16px;
+}
+
+/* Buttons: pill shaped, sentence case. Large = 56px for the main action of a screen. */
+ion-button {
+  --border-radius: 20px;
+  --box-shadow: none;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  min-height: 40px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  text-transform: none;
+}
+
+ion-button.button-small {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  min-height: 32px;
+}
+
+ion-button.button-large {
+  --border-radius: 28px;
+  min-height: 56px;
+  font-size: 1rem;
+}
+
+ion-button.button-outline {
+  --border-width: 1px;
+  --border-color: var(--md-sys-color-outline);
+}
+
+ion-button.button-clear,
+ion-buttons ion-button {
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+ion-buttons ion-button.button-has-icon-only {
+  --border-radius: 50%;
+}
+
+/* FAB: rounded square, primary container. */
+ion-fab-button {
+  --border-radius: 16px;
+  --background: var(--md-sys-color-primary-container);
+  --background-activated: var(--md-sys-color-primary-container);
+  --background-hover: var(--md-sys-color-primary-container);
+  --color: var(--md-sys-color-on-primary-container);
+  --box-shadow: var(--md-sys-elevation-3);
+  width: 56px;
+  height: 56px;
+}
+
+/* Cards: filled surface container, 12px corners, no shadow. */
+ion-card {
+  border-radius: var(--tt-radius-md);
+  box-shadow: none;
+}
+
+/* Lists: inset lists become rounded containers on the surface; no hairlines in plain lists. */
+ion-list.list-inset {
+  --ion-item-background: var(--md-sys-color-surface-container-low);
+  margin-inline: 16px;
+  border-radius: var(--tt-radius-lg);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+ion-list-header {
+  --color: var(--md-sys-color-on-surface);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+ion-item {
+  --inner-border-width: 0;
+  --border-width: 0;
+  --min-height: 56px;
+}
+
+ion-note {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Search bar: full pill on surface container high. */
+ion-searchbar.md {
+  --background: var(--md-sys-color-surface-container-high);
+  --border-radius: 28px;
+  --box-shadow: none;
+  padding-inline: 16px;
+}
+
+ion-searchbar.md .searchbar-input {
+  min-height: 56px;
+}
+
+/* Badges: tonal labels. */
+ion-badge {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+ion-badge.ion-color-success {
+  --ion-color-base: var(--md-sys-color-primary-container) !important;
+  --ion-color-contrast: var(--md-sys-color-on-primary-container) !important;
+}
+
+ion-badge.ion-color-medium {
+  --ion-color-base: var(--md-sys-color-surface-container-highest) !important;
+  --ion-color-contrast: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Switch: 52×32 track with a 24px handle. */
+ion-toggle {
+  --track-background: var(--md-sys-color-surface-container-highest);
+  --track-background-checked: var(--md-sys-color-primary);
+  --handle-background: var(--md-sys-color-outline);
+  --handle-background-checked: var(--md-sys-color-on-primary);
+  --handle-width: 24px;
+  --handle-height: 24px;
+  --handle-max-height: 24px;
+  --handle-spacing: 4px;
+  --handle-box-shadow: none;
+  --border-radius: 16px;
+}
+
+ion-toggle::part(track) {
+  box-sizing: border-box;
+  width: 52px;
+  height: 32px;
+  border: 2px solid var(--md-sys-color-outline);
+}
+
+ion-toggle.toggle-checked::part(track) {
+  border-color: var(--md-sys-color-primary);
+}
+
+/* Dialogs, sheets and snackbars. */
+ion-alert {
+  --background: var(--md-sys-color-surface-container-high);
+}
+
+ion-alert .alert-wrapper {
+  border-radius: var(--tt-radius-xl);
+  box-shadow: var(--md-sys-elevation-3);
+}
+
+ion-alert .alert-head {
+  padding: 24px 24px 16px;
+}
+
+ion-alert .alert-title {
+  color: var(--md-sys-color-on-surface);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+ion-alert .alert-message {
+  padding: 0 24px 24px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+ion-alert .alert-button {
+  border-radius: 20px;
+  text-transform: none;
+  font-weight: 500;
+}
+
+ion-action-sheet {
+  --background: var(--md-sys-color-surface-container-low);
+}
+
+ion-action-sheet .action-sheet-group:first-child {
+  padding-top: 8px;
+  border-radius: var(--tt-radius-xl) var(--tt-radius-xl) 0 0;
+}
+
+ion-modal {
+  --border-radius: var(--tt-radius-xl);
+}
+
+ion-toast {
+  --background: var(--md-sys-color-inverse-surface);
+  --color: var(--md-sys-color-inverse-on-surface);
+  --button-color: var(--md-sys-color-inverse-primary);
+  --border-radius: 4px;
+}

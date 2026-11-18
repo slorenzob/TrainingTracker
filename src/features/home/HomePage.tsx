@@ -16,6 +16,7 @@ import { useNow } from '../../components/useNow'
 import { discardActiveSession, elapsedMs, getActiveSession } from '../../db/activeSession'
 import { db } from '../../db/schema'
 import { formatTimer } from '../../i18n/format'
+import TodayReminderBanner from '../reminders/TodayReminderBanner'
 import './home.css'
 
 async function loadActive() {
@@ -49,6 +50,7 @@ export default function HomePage() {
 
   return (
     <PageLayout title={t('tabs.home')}>
+      <TodayReminderBanner />
       <div className="home-actions">
         {current === null && (
           <IonButton expand="block" size="large" routerLink="/home/start">

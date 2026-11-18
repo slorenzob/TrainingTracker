@@ -8,7 +8,7 @@ import {
 } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { alarmOutline } from 'ionicons/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { listDogs } from '../../db/dogs'
 import { listReminders } from '../../db/reminders'
@@ -18,6 +18,8 @@ import { dueToday } from './reminderLogic'
 import './reminders.css'
 
 const DISMISS_KEY = 'reminders.dismissedOn'
+// The banner lives on several tabs that stay mounted; this keeps them in step.
+const DISMISS_EVENT = 'tt:reminder-dismissed'
 
 function readDismissed(): string | null {
   try {
@@ -53,6 +55,13 @@ export default function TodayReminderBanner() {
   const { t } = useTranslation()
   const [dismissedOn, setDismissedOn] = useState(readDismissed)
   const due = useLiveQuery(load)
+
+  useEffect(() => {
+    const sync = (e: Event) => setDismissedOn((e as CustomEvent<string>).detail)
+    window.addEventListener(DISMISS_EVENT, sync)
+    return () => window.removeEventListener(DISMISS_EVENT, sync)
+  }, [])
+
   if (!due || dismissedOn === due.today) return null
 
   const dismiss = () => {
@@ -62,6 +71,7 @@ export default function TodayReminderBanner() {
       // Only hidden for this visit then.
     }
     setDismissedOn(due.today)
+    window.dispatchEvent(new CustomEvent(DISMISS_EVENT, { detail: due.today }))
   }
 
   const names = new Intl.ListFormat('es', { type: 'conjunction' }).format(

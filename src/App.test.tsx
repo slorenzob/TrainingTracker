@@ -205,6 +205,16 @@ describe('reminders', () => {
     await screen.findAllByText('Toby')
     expect(screen.queryByText('Hoy toca entrenar con Toby')).not.toBeInTheDocument()
   })
+
+  it('shows today’s reminder on the home tab too', async () => {
+    const dog = await createDog({ name: 'Toby' })
+    const today = new Date().getDay() as Weekday
+    await createReminder({ dogId: dog.id, weekdays: [today], time: '18:00', enabled: true })
+
+    renderAt('/home')
+    expect(await screen.findByText('Hoy toca entrenar con Toby')).toBeInTheDocument()
+    expect(screen.getByText('Recordatorio de las 18:00.')).toBeInTheDocument()
+  })
 })
 
 describe('starting a session from home', () => {

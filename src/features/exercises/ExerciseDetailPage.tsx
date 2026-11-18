@@ -10,14 +10,20 @@ import {
   useIonRouter,
 } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { createOutline, linkOutline, trashOutline } from 'ionicons/icons'
+import { createOutline, linkOutline, removeCircleOutline, trashOutline } from 'ionicons/icons'
 import { useTranslation } from 'react-i18next'
 import { useAppToast } from '../../components/useAppToast'
 import { useParams } from 'react-router-dom'
 import EmptyState from '../../components/EmptyState'
 import PageLayout from '../../components/PageLayout'
 import { ExerciseInUseError } from '../../db/errors'
-import { deleteExercise, getExercise } from '../../db/exercises'
+import {
+  deleteExercise,
+  getExercise,
+  getExerciseUsage,
+  type ExerciseUsage,
+} from '../../db/exercises'
+import { removeExerciseFromPlanByExercise } from '../../db/plans'
 import MediaGallery from '../../media/MediaGallery'
 import './exercises.css'
 
@@ -50,23 +56,65 @@ export default function ExerciseDetailPage() {
     )
   }
 
-  const remove = async () => {
+  const showInUse = (usage: ExerciseUsage[]) =>
+    presentAlert({
+      header: t('exercises.inUseTitle'),
+      message:
+        t('exercises.inUseMessage', {
+          plans: usage
+            .map((u) =>
+              t(u.retired ? 'exercises.usageRetired' : 'exercises.usage', {
+                plan: u.plan.name,
+                dog: u.dogName,
+              }),
+            )
+            .join(', '),
+        }) + (usage.some((u) => u.retired) ? ` ${t('exercises.inUseRetiredHint')}` : ''),
+      buttons: [{ text: t('common.close'), role: 'cancel' }],
+    })
+
+  const deleteFromLibrary = async () => {
     try {
       await deleteExercise(exercise.id)
       router.push('/exercises', 'back', 'pop')
     } catch (e) {
       if (!(e instanceof ExerciseInUseError)) throw e
-      void presentToast({ message: t('exercises.inUse'), duration: 4000, color: 'warning' })
+      void showInUse(await getExerciseUsage(exercise.id))
     }
   }
 
-  const confirmDelete = () =>
-    presentAlert({
+  const confirmDelete = async () => {
+    const usage = await getExerciseUsage(exercise.id)
+    if (usage.length > 0) {
+      void showInUse(usage)
+      return
+    }
+    void presentAlert({
       header: t('exercises.deleteTitle', { title: exercise.title }),
       message: t('exercises.deleteMessage'),
       buttons: [
         { text: t('common.cancel'), role: 'cancel' },
-        { text: t('common.delete'), role: 'destructive', handler: () => void remove() },
+        { text: t('common.delete'), role: 'destructive', handler: () => void deleteFromLibrary() },
+      ],
+    })
+  }
+
+  const removeFromPlan = async () => {
+    const outcome = await removeExerciseFromPlanByExercise(planId!, exercise.id)
+    void presentToast({
+      message: outcome === 'archived' ? t('plans.archivedToast') : t('plans.removed'),
+      duration: 2500,
+    })
+    router.push(backHref, 'back', 'pop')
+  }
+
+  const confirmRemoveFromPlan = () =>
+    presentAlert({
+      header: t('plans.removeTitle', { title: exercise.title }),
+      message: t('plans.removeMessage'),
+      buttons: [
+        { text: t('common.cancel'), role: 'cancel' },
+        { text: t('common.remove'), role: 'destructive', handler: () => void removeFromPlan() },
       ],
     })
 
@@ -79,13 +127,23 @@ export default function ExerciseDetailPage() {
           <IonButton aria-label={t('common.edit')} routerLink={`/exercises/${exercise.id}/edit`}>
             <IonIcon slot="icon-only" icon={createOutline} />
           </IonButton>
-          <IonButton
-            aria-label={t('common.delete')}
-            color="danger"
-            onClick={() => void confirmDelete()}
-          >
-            <IonIcon slot="icon-only" icon={trashOutline} />
-          </IonButton>
+          {planId ? (
+            <IonButton
+              aria-label={t('plans.removeFromPlan')}
+              color="danger"
+              onClick={() => void confirmRemoveFromPlan()}
+            >
+              <IonIcon slot="icon-only" icon={removeCircleOutline} />
+            </IonButton>
+          ) : (
+            <IonButton
+              aria-label={t('common.delete')}
+              color="danger"
+              onClick={() => void confirmDelete()}
+            >
+              <IonIcon slot="icon-only" icon={trashOutline} />
+            </IonButton>
+          )}
         </>
       }
     >

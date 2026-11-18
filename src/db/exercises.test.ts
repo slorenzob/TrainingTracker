@@ -3,8 +3,15 @@ import { memoryMedia } from '../test/setup'
 import { imageFile, makeDog, makeExercise } from '../test/factories'
 import { saveMedia } from '../media/mediaStore'
 import { ExerciseInUseError, ValidationError } from './errors'
-import { createExercise, deleteExercise, listExercises, updateExercise } from './exercises'
-import { createPlan } from './plans'
+import {
+  createExercise,
+  deleteExercise,
+  getExerciseUsage,
+  listExercises,
+  updateExercise,
+} from './exercises'
+import { createPlan, getPlanExercises, removeExerciseFromPlanByExercise } from './plans'
+import { createSession } from './sessions'
 
 describe('exercises', () => {
   it('creates exercises with links and media', async () => {
@@ -62,5 +69,40 @@ describe('exercises', () => {
     const exercise = await makeExercise()
     await createPlan(dog.id, { name: 'P', startDate: '2026-10-01' }, [exercise.id])
     await expect(deleteExercise(exercise.id)).rejects.toBeInstanceOf(ExerciseInUseError)
+  })
+
+  it('removing from a plan keeps the exercise in the library and in other plans', async () => {
+    const dog = await makeDog()
+    const exercise = await makeExercise()
+    const a = await createPlan(dog.id, { name: 'A', startDate: '2026-10-01' }, [exercise.id])
+    const b = await createPlan(dog.id, { name: 'B', startDate: '2026-10-01' }, [exercise.id])
+
+    expect(await removeExerciseFromPlanByExercise(a.id, exercise.id)).toBe('deleted')
+
+    expect(await listExercises()).toEqual([exercise])
+    expect(await getPlanExercises(a.id)).toEqual([])
+    expect((await getPlanExercises(b.id)).map((pe) => pe.exerciseId)).toEqual([exercise.id])
+    expect((await getExerciseUsage(exercise.id)).map((u) => u.plan.name)).toEqual(['B'])
+    await expect(deleteExercise(exercise.id)).rejects.toBeInstanceOf(ExerciseInUseError)
+
+    await removeExerciseFromPlanByExercise(b.id, exercise.id)
+    expect(await getExerciseUsage(exercise.id)).toEqual([])
+    await deleteExercise(exercise.id)
+    expect(await listExercises()).toEqual([])
+  })
+
+  it('reports plans where the exercise is only kept as retired', async () => {
+    const dog = await makeDog()
+    const exercise = await makeExercise()
+    const plan = await createPlan(dog.id, { name: 'P', startDate: '2026-10-01' }, [exercise.id])
+    const [pe] = await getPlanExercises(plan.id)
+    await createSession(plan.id, {
+      date: '2026-10-02',
+      comment: '',
+      results: [{ planExerciseId: pe.id, stars: 4 }],
+    })
+    expect(await removeExerciseFromPlanByExercise(plan.id, exercise.id)).toBe('archived')
+    const usage = await getExerciseUsage(exercise.id)
+    expect(usage.map((u) => [u.plan.name, u.dogName, u.retired])).toEqual([['P', dog.name, true]])
   })
 })

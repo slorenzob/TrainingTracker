@@ -19,7 +19,7 @@ import {
   type ItemReorderEventDetail,
 } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { add, barbellOutline, ellipsisVertical, swapVertical } from 'ionicons/icons'
+import { add, barbellOutline, createOutline, ellipsisVertical, removeCircle } from 'ionicons/icons'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppToast } from '../../components/useAppToast'
@@ -58,7 +58,7 @@ export default function PlanDetailPage() {
   const [presentAlert] = useIonAlert()
   const presentToast = useAppToast()
   const [modal, setModal] = useState<Modal>(null)
-  const [reordering, setReordering] = useState(false)
+  const [editing, setEditing] = useState(false)
 
   // undefined while loading, null when the plan does not exist.
   const plan = useLiveQuery(async () => (await getPlan(planId)) ?? null, [planId])
@@ -155,24 +155,33 @@ export default function PlanDetailPage() {
       <IonList inset>
         <IonListHeader>
           <IonLabel>{t('plans.exercises')}</IonLabel>
-          {active.length > 1 && (
-            <IonButton onClick={() => setReordering((r) => !r)}>
-              <IonIcon slot="start" icon={swapVertical} />
-              {reordering ? t('common.done') : t('plans.reorder')}
+          {(active.length > 0 || editing) && (
+            <IonButton onClick={() => setEditing((r) => !r)}>
+              {!editing && <IonIcon slot="start" icon={createOutline} />}
+              {editing ? t('common.done') : t('plans.edit')}
             </IonButton>
           )}
         </IonListHeader>
-        <IonReorderGroup disabled={!reordering} onIonItemReorder={reorder}>
+        <IonReorderGroup disabled={!editing} onIonItemReorder={reorder}>
           {active.map((pe) => (
-            <IonItemSliding key={pe.id} disabled={reordering}>
+            <IonItemSliding key={pe.id} disabled={editing}>
               <IonItem
                 routerLink={
-                  reordering
-                    ? undefined
-                    : `/dogs/${dogId}/plans/${planId}/exercises/${pe.exerciseId}`
+                  editing ? undefined : `/dogs/${dogId}/plans/${planId}/exercises/${pe.exerciseId}`
                 }
-                detail={!reordering}
+                detail={!editing}
               >
+                {editing && (
+                  <IonButton
+                    slot="start"
+                    fill="clear"
+                    color="danger"
+                    aria-label={t('plans.removeFromPlan')}
+                    onClick={() => void remove(pe)}
+                  >
+                    <IonIcon slot="icon-only" icon={removeCircle} />
+                  </IonButton>
+                )}
                 <IonThumbnail slot="start" className="plan-exercise-thumb">
                   {pe.exercise.media[0] ? (
                     <MediaThumb media={pe.exercise.media[0]} />

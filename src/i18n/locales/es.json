@@ -68,7 +68,11 @@
     "titleRequired": "El título es obligatorio.",
     "deleteTitle": "¿Eliminar «{{title}}»?",
     "deleteMessage": "Se borrará de la biblioteca junto con sus fotos y vídeos.",
-    "inUse": "No se puede eliminar: el ejercicio forma parte de algún plan."
+    "inUseTitle": "No se puede eliminar",
+    "inUseMessage": "El ejercicio se usa en estos planes: {{plans}}. Quítalo de ellos antes de eliminarlo de la biblioteca.",
+    "inUseRetiredHint": "En los planes donde está retirado se conserva por sus puntuaciones; solo se libera al eliminar ese plan.",
+    "usage": "{{plan}} ({{dog}})",
+    "usageRetired": "{{plan}} ({{dog}}, retirado)"
   },
   "progress": {
     "empty": "Registra alguna sesión para ver tu progreso.",
@@ -157,10 +161,13 @@
     "exercises": "Ejercicios",
     "noExercises": "Este plan todavía no tiene ejercicios.",
     "addExercises": "Añadir ejercicios",
-    "reorder": "Ordenar",
     "archived": "Ejercicios retirados",
     "archivedHelp": "Se quitaron del plan, pero se conservan porque tienen puntuaciones en alguna sesión.",
     "removed": "Ejercicio quitado del plan.",
+    "removeFromPlan": "Quitar del plan",
+    "removeTitle": "¿Quitar «{{title}}» del plan?",
+    "removeMessage": "Seguirá en la biblioteca y en los demás planes.",
+    "edit": "Editar",
     "archivedToast": "Ejercicio retirado. Sus puntuaciones se conservan.",
     "sessions": "Sesiones",
     "duplicate": "Duplicar plan",

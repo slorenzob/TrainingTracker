@@ -5,34 +5,29 @@ export const WEEK: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0]
 
 const ICS_DAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'] as const
 
-export interface DueReminder {
-  /** Dogs that still have to train today, in name order. */
-  dogs: Dog[]
-  /** Earliest reminder time among the matching reminders, `HH:mm`. */
-  time: string
-}
-
 /**
- * Which dogs have a reminder today and no session recorded yet. A reminder without a dog
- * applies to every dog.
+ * Dogs that have a reminder today and no session recorded yet, mapped to the earliest
+ * reminder time (`HH:mm`) that applies to each. A reminder without a dog applies to every dog.
  */
 export function dueToday(
   reminders: readonly Reminder[],
-  dogs: readonly Dog[],
+  dogs: readonly Pick<Dog, 'id'>[],
   dogIdsTrainedToday: ReadonlySet<string>,
   now: Date,
-): DueReminder | null {
+): Map<string, string> {
   const today = now.getDay() as Weekday
-  const matching = reminders.filter((r) => r.enabled && r.weekdays.includes(today))
-  if (matching.length === 0) return null
-
-  const ids = new Set(matching.flatMap((r) => (r.dogId ? [r.dogId] : dogs.map((d) => d.id))))
-  const pending = dogs
-    .filter((d) => ids.has(d.id) && !dogIdsTrainedToday.has(d.id))
-    .sort((a, b) => a.name.localeCompare(b.name, 'es'))
-  if (pending.length === 0) return null
-  const time = matching.map((r) => r.time).sort()[0]
-  return { dogs: pending, time }
+  const due = new Map<string, string>()
+  const matching = reminders
+    .filter((r) => r.enabled && r.weekdays.includes(today))
+    .sort((a, b) => a.time.localeCompare(b.time))
+  for (const r of matching) {
+    for (const dog of dogs) {
+      if (r.dogId && r.dogId !== dog.id) continue
+      if (dogIdsTrainedToday.has(dog.id) || due.has(dog.id)) continue
+      due.set(dog.id, r.time)
+    }
+  }
+  return due
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')

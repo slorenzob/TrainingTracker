@@ -1,37 +1,44 @@
-import {
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonIcon,
-  useIonAlert,
-} from '@ionic/react'
+import { IonButton, useIonAlert, useIonRouter } from '@ionic/react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { play } from 'ionicons/icons'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import EmptyState from '../../components/EmptyState'
 import PageLayout from '../../components/PageLayout'
 import { useNow } from '../../components/useNow'
-import { discardActiveSession, elapsedMs, getActiveSession } from '../../db/activeSession'
-import { db } from '../../db/schema'
-import { formatTimer } from '../../i18n/format'
+import { discardActiveSession, startActiveSession } from '../../db/activeSession'
+import { todayIso } from '../../db/utils'
+import ActivityCalendar from './ActivityCalendar'
+import DogCard from './DogCard'
+import { useDismissedReminders } from './dismissedReminders'
+import { type DogCardData, loadHome } from './homeData'
 import './home.css'
 
-async function loadActive() {
-  const active = await getActiveSession()
-  if (!active) return null
-  const [dog, plan] = await Promise.all([db.dogs.get(active.dogId), db.plans.get(active.planId)])
-  return { active, dogName: dog?.name ?? '', planName: plan?.name ?? '' }
-}
-
-/** Main screen, shown when the app starts: start a session or resume the one in progress. */
+/** Main screen, shown when the app starts: a card per dog to train it, and recent activity. */
 export default function HomePage() {
   const { t } = useTranslation()
+  const router = useIonRouter()
   const [presentAlert] = useIonAlert()
-  // undefined while loading, null when no session is in progress.
-  const current = useLiveQuery(loadActive)
-  const now = useNow(Boolean(current?.active.runningSince))
+  const data = useLiveQuery(() => loadHome())
+  const active = data?.active
+  const now = useNow(Boolean(active?.session.runningSince))
+  const notices = useDismissedReminders(data?.today ?? todayIso())
+  const [starting, setStarting] = useState(false)
+
+  const train = async ({ dog, quickStartPlanId }: DogCardData) => {
+    // Several plans (or an empty one) need the plan step of the wizard.
+    if (!quickStartPlanId) {
+      router.push(`/home/start?dog=${dog.id}`)
+      return
+    }
+    if (starting) return
+    setStarting(true)
+    try {
+      await startActiveSession(dog.id, quickStartPlanId)
+      router.push('/home/session')
+    } finally {
+      setStarting(false)
+    }
+  }
 
   const confirmDiscard = () =>
     presentAlert({
@@ -49,41 +56,34 @@ export default function HomePage() {
 
   return (
     <PageLayout title={t('tabs.home')}>
-      <div className="home-actions">
-        {current === null && (
-          <IonButton expand="block" size="large" routerLink="/home/start">
-            <IonIcon slot="start" icon={play} aria-hidden />
-            {t('home.startSession')}
-          </IonButton>
-        )}
-        {current && (
-          <IonCard className="home-active">
-            <IonCardHeader>
-              <IonCardSubtitle>{t('home.activeSession')}</IonCardSubtitle>
-              <IonCardTitle>
-                {t('home.activeWith', { dog: current.dogName, plan: current.planName })}
-              </IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <p className="home-active__timer" aria-label={t('active.timer')}>
-                {formatTimer(elapsedMs(current.active, now))}
-                {!current.active.runningSince && ` · ${t('active.paused')}`}
-              </p>
-              <IonButton expand="block" routerLink="/home/session">
-                {t('home.continue')}
-              </IonButton>
-              <IonButton
-                expand="block"
-                fill="clear"
-                color="danger"
-                onClick={() => void confirmDiscard()}
-              >
-                {t('home.discard')}
-              </IonButton>
-            </IonCardContent>
-          </IonCard>
-        )}
-      </div>
+      {data?.cards.length === 0 && (
+        <>
+          <EmptyState message={t('home.noDogs')} />
+          <div className="home-empty-action">
+            <IonButton routerLink="/dogs">{t('start.goToDogs')}</IonButton>
+          </div>
+        </>
+      )}
+      {data && data.cards.length > 0 && (
+        <>
+          <div className="home-dogs">
+            {data.cards.map((card) => (
+              <DogCard
+                key={card.dog.id}
+                card={card}
+                today={data.today}
+                session={active?.session.dogId === card.dog.id ? { ...active, now } : undefined}
+                busy={Boolean(active)}
+                noticeHidden={notices.isDismissed(card.dog.id)}
+                onHideNotice={() => notices.dismiss(card.dog.id)}
+                onTrain={() => void train(card)}
+                onDiscard={() => void confirmDiscard()}
+              />
+            ))}
+          </div>
+          <ActivityCalendar dogs={data.cards.map((c) => c.dog)} today={data.today} />
+        </>
+      )}
     </PageLayout>
   )
 }

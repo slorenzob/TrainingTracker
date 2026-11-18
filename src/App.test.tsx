@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import pkg from '../package.json'
 import App from './App'
-import { startActiveSession } from './db/activeSession'
+import { getActiveSession, startActiveSession } from './db/activeSession'
 import { createDog } from './db/dogs'
 import { createExercise } from './db/exercises'
 import { createPlan, finishPlan, getPlanExercises, removeExerciseFromPlan } from './db/plans'
@@ -174,8 +175,8 @@ describe('progress', () => {
   })
 })
 
-describe('reminders', () => {
-  it('shows today’s reminder on the dogs tab until a session is recorded', async () => {
+describe('home', () => {
+  const setUp = async () => {
     const dog = await createDog({ name: 'Toby' })
     const exercise = await createExercise({
       title: 'Llamada',
@@ -186,14 +187,25 @@ describe('reminders', () => {
     const plan = await createPlan(dog.id, { name: 'Básico', startDate: '2026-10-01' }, [
       exercise.id,
     ])
+    return { dog, plan }
+  }
+
+  it('shows a card per dog with today’s notice until it is closed or a session is recorded', async () => {
+    const user = userEvent.setup()
+    const { dog, plan } = await setUp()
     const today = new Date().getDay() as Weekday
     await createReminder({ dogId: dog.id, weekdays: [today], time: '18:00', enabled: true })
 
-    const { unmount } = renderAt('/dogs')
-    expect(await screen.findByText('Hoy toca entrenar con Toby')).toBeInTheDocument()
-    // Its link target lives in the web component's shadow DOM; checked in the browser.
-    expect(screen.getByText('Registrar sesión')).toBeInTheDocument()
+    const { unmount } = renderAt('/home')
+    expect(await screen.findByText('Hoy toca entrenar · 18:00')).toBeInTheDocument()
+    expect(screen.getByText('Básico · 0 sesiones')).toBeInTheDocument()
+    expect(screen.getByText('Sin sesiones todavía')).toBeInTheDocument()
+    expect(screen.getByText('Entrenar')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Ocultar aviso hasta mañana' }))
+    expect(screen.queryByText('Hoy toca entrenar · 18:00')).not.toBeInTheDocument()
     unmount()
+    localStorage.clear()
 
     const [pe] = await getPlanExercises(plan.id)
     await createSession(plan.id, {
@@ -201,9 +213,46 @@ describe('reminders', () => {
       comment: '',
       results: [{ planExerciseId: pe.id, stars: 4 }],
     })
-    renderAt('/dogs')
-    await screen.findAllByText('Toby')
-    expect(screen.queryByText('Hoy toca entrenar con Toby')).not.toBeInTheDocument()
+    renderAt('/home')
+    expect(await screen.findByText('Última sesión: hoy')).toBeInTheDocument()
+    expect(screen.getByText('Básico · 1 sesión')).toBeInTheDocument()
+    expect(screen.queryByText('Hoy toca entrenar · 18:00')).not.toBeInTheDocument()
+    expect(await screen.findByText('1 sesión en las últimas 12 semanas')).toBeInTheDocument()
+  })
+
+  it('starts the only plan of a dog straight from its card', async () => {
+    const user = userEvent.setup()
+    const { dog, plan } = await setUp()
+    renderAt('/home')
+    await user.click(await screen.findByText('Entrenar'))
+    await waitFor(async () =>
+      expect(await getActiveSession()).toMatchObject({ dogId: dog.id, planId: plan.id }),
+    )
+  })
+
+  it('offers to create a plan to a dog without active plans', async () => {
+    await createDog({ name: 'Luna' })
+    renderAt('/home')
+    expect(await screen.findByText('Sin plan activo')).toBeInTheDocument()
+    expect(screen.getByText('Crear plan')).toBeInTheDocument()
+    expect(screen.queryByText('Entrenar')).not.toBeInTheDocument()
+  })
+
+  it('filters the activity calendar by dog', async () => {
+    const user = userEvent.setup()
+    const { plan } = await setUp()
+    await createDog({ name: 'Luna' })
+    const [pe] = await getPlanExercises(plan.id)
+    await createSession(plan.id, {
+      date: todayIso(),
+      comment: '',
+      results: [{ planExerciseId: pe.id, stars: 4 }],
+    })
+    renderAt('/home')
+    expect(await screen.findByText('1 sesión en las últimas 12 semanas')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Luna' }))
+    expect(screen.getByText('0 sesiones en las últimas 12 semanas')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Luna' })).toHaveAttribute('aria-pressed', 'true')
   })
 })
 
@@ -229,7 +278,8 @@ describe('starting a session from home', () => {
     await startActiveSession(dog.id, plan.id)
     renderAt('/home')
     expect(await screen.findByText('Continuar sesión')).toBeInTheDocument()
-    expect(screen.getByText('Toby · Básico')).toBeInTheDocument()
+    expect(screen.getByText('Sesión en curso · Básico')).toBeInTheDocument()
+    expect(screen.queryByText('Entrenar')).not.toBeInTheDocument()
   })
 
   it('asks for the dog first when there are several', async () => {
@@ -238,6 +288,14 @@ describe('starting a session from home', () => {
     renderAt('/home/start')
     expect(await screen.findByText('¿Quién entrena hoy?')).toBeInTheDocument()
     expect(screen.getByText('Paso 1 de 2')).toBeInTheDocument()
+  })
+
+  it('goes straight to the plan step for the dog picked on the home screen', async () => {
+    await createDog({ name: 'Luna' })
+    const toby = await createDog({ name: 'Toby' })
+    renderAt(`/home/start?dog=${toby.id}`)
+    expect(await screen.findByText('Plan para Toby')).toBeInTheDocument()
+    expect(screen.getByText('Paso 2 de 2')).toBeInTheDocument()
   })
 
   it('shows the app version in settings', async () => {

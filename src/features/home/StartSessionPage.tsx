@@ -11,6 +11,7 @@ import {
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
 import EmptyState from '../../components/EmptyState'
 import PageLayout from '../../components/PageLayout'
 import { getActiveSession, getPlanChoices, startActiveSession } from '../../db/activeSession'
@@ -35,15 +36,17 @@ async function loadPlanStep(dogId: string) {
 }
 
 /**
- * Two-step wizard to start a session: pick the dog (skipped when there is only one), then
- * the plan (preselected: the last one used). Starting opens the in-progress session.
+ * Two-step wizard to start a session: pick the dog (skipped when there is only one, or when
+ * it comes in `?dog=`), then the plan (preselected: the last one used). Starting opens the
+ * in-progress session.
  */
 export default function StartSessionPage() {
   const { t } = useTranslation()
   const router = useIonRouter()
   const planDates = usePlanDates()
   const dogs = useLiveQuery(listDogs)
-  const [dogId, setDogId] = useState<string>()
+  const requestedDogId = new URLSearchParams(useLocation().search).get('dog') ?? undefined
+  const [dogId, setDogId] = useState(requestedDogId)
   const [planId, setPlanId] = useState<string>()
   const [starting, setStarting] = useState(false)
 

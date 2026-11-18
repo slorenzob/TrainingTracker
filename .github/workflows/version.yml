@@ -1,0 +1,72 @@
+name: Version
+
+# Bumps the app version (package.json) every time a PR is merged into main, then commits
+# and tags it. The version is shown in Settings.
+#
+# Bump type comes from the PR labels: `major`, `minor`, otherwise patch.
+# If the PR already changed the version by hand, it is left as is.
+#
+# The commit is pushed with GITHUB_TOKEN, so it does not trigger other workflows (no loop).
+# It has no [skip ci] so Cloudflare Pages deploys the build with the new version.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Decide bump type
+        id: bump
+        env:
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          before=$(git show "$BASE_SHA:package.json" | node -p 'JSON.parse(require("fs").readFileSync(0)).version')
+          now=$(node -p 'require("./package.json").version')
+          if [ "$before" != "$now" ]; then
+            echo "Version changed by the PR ($before -> $now); not bumping."
+            echo "type=none" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -q '"major"'; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -q '"minor"'; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump, commit and tag
+        env:
+          TYPE: ${{ steps.bump.outputs.type }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$TYPE" != "none" ]; then
+            npm version "$TYPE" --no-git-tag-version
+            version=$(node -p 'require("./package.json").version')
+            git commit -am "Release v$version (#$PR_NUMBER)"
+          else
+            version=$(node -p 'require("./package.json").version')
+          fi
+          git tag "v$version"
+          git push origin HEAD:main "v$version"

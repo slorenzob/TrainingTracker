@@ -226,6 +226,18 @@ export default function SettingsPage() {
           </>
         )}
       </IonList>
+
+      <IonList inset>
+        <IonListHeader>
+          <IonLabel>{t('settings.about')}</IonLabel>
+        </IonListHeader>
+        <IonItem lines="none">
+          <IonLabel>{t('settings.version')}</IonLabel>
+          <IonNote slot="end" data-testid="app-version">
+            {__APP_VERSION__}
+          </IonNote>
+        </IonItem>
+      </IonList>
     </PageLayout>
   )
 }

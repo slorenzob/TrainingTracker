@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import pkg from './package.json' with { type: 'json' }
 
 // UTC build timestamp (YYYYMMDDHHmmss), stamped into every compiled file name so each build
 // gets new URLs and browsers can't serve a previous build's files from cache.
@@ -13,6 +14,9 @@ export default defineConfig(({ mode }) => ({
   // Served from the domain root (Cloudflare Pages). Absolute asset paths keep deep links
   // like /dogs/<id> working on reload; a relative base would resolve them under /dogs/.
   base: '/',
+  // App version from package.json, bumped automatically when a PR is merged
+  // (.github/workflows/version.yml). Shown in Settings.
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   build: {
     rollupOptions: {
       output: {

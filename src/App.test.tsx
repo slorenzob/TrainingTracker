@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import pkg from '../package.json'
 import App from './App'
 import { startActiveSession } from './db/activeSession'
 import { createDog } from './db/dogs'
@@ -237,5 +238,11 @@ describe('starting a session from home', () => {
     renderAt('/home/start')
     expect(await screen.findByText('¿Quién entrena hoy?')).toBeInTheDocument()
     expect(screen.getByText('Paso 1 de 2')).toBeInTheDocument()
+  })
+
+  it('shows the app version in settings', async () => {
+    renderAt('/settings')
+    expect(await screen.findByText('Versión')).toBeInTheDocument()
+    expect(screen.getByTestId('app-version')).toHaveTextContent(pkg.version)
   })
 })

@@ -139,6 +139,20 @@ export async function removeExerciseFromPlan(
   })
 }
 
+/** Removes the exercise from that plan only; the library and other plans are untouched. */
+export async function removeExerciseFromPlanByExercise(
+  planId: string,
+  exerciseId: string,
+): Promise<'deleted' | 'archived'> {
+  const row = await db.planExercises
+    .where('planId')
+    .equals(planId)
+    .filter((r) => r.exerciseId === exerciseId && !r.archived)
+    .first()
+  if (!row) throw new EntityNotFoundError('PlanExercise', `${planId}/${exerciseId}`)
+  return removeExerciseFromPlan(row.id)
+}
+
 /** Sets the order of the plan's active exercises to the given sequence of PlanExercise ids. */
 export async function reorderPlanExercises(
   planId: string,

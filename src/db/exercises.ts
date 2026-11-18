@@ -1,7 +1,7 @@
 import { deleteMedia } from '../media/mediaStore'
 import { ExerciseInUseError, EntityNotFoundError, ValidationError } from './errors'
 import { db } from './schema'
-import type { Exercise } from './types'
+import type { Exercise, Plan } from './types'
 import { newId, nowIso } from './utils'
 import { isHttpUrl } from './validation'
 
@@ -52,6 +52,30 @@ export const getExercise = (id: string): Promise<Exercise | undefined> => db.exe
 
 export async function isExerciseInUse(id: string): Promise<boolean> {
   return (await db.planExercises.where('exerciseId').equals(id).count()) > 0
+}
+
+export interface ExerciseUsage {
+  plan: Plan
+  dogName: string
+  /** Only kept as a retired exercise because sessions of that plan rated it. */
+  retired: boolean
+}
+
+/** Plans that reference the exercise, including those where it was retired but kept for its ratings. */
+export async function getExerciseUsage(id: string): Promise<ExerciseUsage[]> {
+  const rows = await db.planExercises.where('exerciseId').equals(id).toArray()
+  const retiredByPlan = new Map<string, boolean>()
+  for (const r of rows)
+    retiredByPlan.set(r.planId, (retiredByPlan.get(r.planId) ?? true) && r.archived)
+  const plans = (await db.plans.bulkGet([...retiredByPlan.keys()])).filter((p): p is Plan => !!p)
+  const dogs = await db.dogs.bulkGet(plans.map((p) => p.dogId))
+  return plans
+    .map((plan, i) => ({
+      plan,
+      dogName: dogs[i]?.name ?? '',
+      retired: retiredByPlan.get(plan.id)!,
+    }))
+    .sort((a, b) => a.dogName.localeCompare(b.dogName) || a.plan.name.localeCompare(b.plan.name))
 }
 
 /** Deletes an exercise from the library. Fails if any plan references it. */

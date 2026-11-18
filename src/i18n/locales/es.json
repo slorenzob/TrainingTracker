@@ -132,6 +132,8 @@
     "persist": "Proteger datos",
     "persistDenied": "El navegador no lo ha permitido. Suele concederse al instalar la app en la pantalla de inicio.",
     "backupDueBadge": "Toca hacer una copia de seguridad",
+    "about": "Acerca de",
+    "version": "Versión",
     "counts": {
       "dogs_one": "{{count}} perro",
       "dogs_other": "{{count}} perros",

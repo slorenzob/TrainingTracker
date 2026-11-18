@@ -127,4 +127,32 @@ describe('sessions', () => {
       ['2026-10-05', 2, 3.5],
     ])
   })
+
+  it('stores an optional duration and lets an edit keep, change or clear it', async () => {
+    const base = {
+      date: '2026-10-05',
+      comment: '',
+      results: [{ planExerciseId: sit.id, stars: 3 }],
+    }
+    const session = await createSession(plan.id, { ...base, durationSeconds: 1499.6 })
+    expect(session.durationSeconds).toBe(1500)
+    expect(
+      (await createSession(plan.id, { ...base, durationSeconds: null })).durationSeconds,
+    ).toBeUndefined()
+
+    await updateSession(session.id, base)
+    expect((await getSession(session.id))?.durationSeconds).toBe(1500)
+
+    await updateSession(session.id, { ...base, durationSeconds: 600 })
+    expect((await getSession(session.id))?.durationSeconds).toBe(600)
+
+    await updateSession(session.id, { ...base, durationSeconds: null })
+    expect(await getSession(session.id)).not.toHaveProperty('durationSeconds')
+  })
+
+  it.each([-1, Number.NaN])('rejects a %s duration', async (durationSeconds) => {
+    await expect(
+      createSession(plan.id, { date: '2026-10-05', comment: '', results: [], durationSeconds }),
+    ).rejects.toBeInstanceOf(ValidationError)
+  })
 })

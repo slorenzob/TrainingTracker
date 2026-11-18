@@ -106,13 +106,17 @@ export default function SessionDetailPage() {
     >
       <div className="ion-padding">
         <h1 className="ion-no-margin">{title}</h1>
-        {session.durationSeconds !== undefined && (
-          <IonText color="medium">
-            <p className="ion-no-margin">
-              {t('sessions.duration', { duration: formatDuration(session.durationSeconds) })}
-            </p>
-          </IonText>
-        )}
+        <IonText color="medium">
+          <p className="ion-no-margin">
+            {t('sessions.duration', {
+              // Sessions recorded before durations existed show "--".
+              duration:
+                session.durationSeconds === undefined
+                  ? '--'
+                  : formatDuration(session.durationSeconds),
+            })}
+          </p>
+        </IonText>
         <IonText color={session.comment ? undefined : 'medium'}>
           <p className="session-comment">{session.comment || t('sessions.noComment')}</p>
         </IonText>

@@ -21,7 +21,9 @@ import { getPlanExercises, type PlanExerciseWithDetails } from '../../db/plans'
 import { createSession, getSession, updateSession } from '../../db/sessions'
 import { todayIso } from '../../db/utils'
 import {
+  durationToMinutesText,
   exercisesForForm,
+  parseDurationMinutes,
   ratingsFromResults,
   toSessionInput,
   type RatingDraft,
@@ -48,6 +50,10 @@ export default function SessionFormPage() {
   const [comment, setComment] = useState('')
   const [ratings, setRatings] = useState<RatingsDraft>({})
   const [error, setError] = useState(false)
+  const [durationText, setDurationText] = useState('')
+  // Untouched when editing: keep the stored (possibly timer-exact) duration as is.
+  const [durationTouched, setDurationTouched] = useState(false)
+  const [durationError, setDurationError] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -63,6 +69,7 @@ export default function SessionFormPage() {
       if (session) {
         setDate(session.date)
         setComment(session.comment)
+        setDurationText(durationToMinutesText(session.durationSeconds))
       }
       setStatus('ready')
     })()
@@ -77,11 +84,18 @@ export default function SessionFormPage() {
   }
 
   const save = async () => {
-    const input = toSessionInput(date || todayIso(), comment, ratings)
-    if ('error' in input) {
-      setError(true)
-      return
-    }
+    const duration = parseDurationMinutes(durationText)
+    const durationInvalid = duration !== null && typeof duration === 'object'
+    setDurationError(durationInvalid)
+    const keepStored = isEdit && !durationTouched
+    const input = toSessionInput(
+      date || todayIso(),
+      comment,
+      ratings,
+      keepStored || durationInvalid ? undefined : duration,
+    )
+    if ('error' in input) setError(true)
+    if (durationInvalid || 'error' in input) return
     setSaving(true)
     try {
       if (isEdit) await updateSession(sessionId, input)
@@ -124,6 +138,26 @@ export default function SessionFormPage() {
             type="date"
             value={date}
             onIonInput={(e) => setDate(e.detail.value ?? '')}
+          />
+        </IonItem>
+        <IonItem>
+          <IonInput
+            label={`${t('sessions.durationMinutes')} (${t('common.optional')})`}
+            labelPlacement="stacked"
+            type="number"
+            inputmode="numeric"
+            min={1}
+            max={1440}
+            step="1"
+            placeholder={t('sessions.durationPlaceholder')}
+            value={durationText}
+            className={durationError ? 'ion-invalid ion-touched' : undefined}
+            errorText={t('sessions.durationInvalid')}
+            onIonInput={(e) => {
+              setDurationText(e.detail.value ?? '')
+              setDurationTouched(true)
+              setDurationError(false)
+            }}
           />
         </IonItem>
       </IonList>

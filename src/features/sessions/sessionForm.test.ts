@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { PlanExerciseWithDetails } from '../../db/plans'
 import type { SessionResult } from '../../db/types'
-import { exercisesForForm, ratingsFromResults, toSessionInput } from './sessionForm'
+import {
+  durationToMinutesText,
+  exercisesForForm,
+  parseDurationMinutes,
+  ratingsFromResults,
+  toSessionInput,
+} from './sessionForm'
 
 const pe = (id: string, archived = false) =>
   ({ id, archived, exercise: { title: id } }) as PlanExerciseWithDetails
@@ -45,5 +51,28 @@ describe('session form helpers', () => {
       'rated-old': { stars: 4, note: '' },
     })
     expect(rows.map((r) => r.id)).toEqual(['a', 'rated-old'])
+  })
+
+  it('parses the duration in whole minutes', () => {
+    expect(parseDurationMinutes('')).toBeNull()
+    expect(parseDurationMinutes('  ')).toBeNull()
+    expect(parseDurationMinutes('25')).toBe(1500)
+    expect(parseDurationMinutes(' 1440 ')).toBe(86_400)
+    for (const bad of ['0', '1441', '2.5', '2,5', '-3', 'abc']) {
+      expect(parseDurationMinutes(bad)).toEqual({ error: 'invalidDuration' })
+    }
+  })
+
+  it('shows a stored duration as minutes, at least 1', () => {
+    expect(durationToMinutesText(undefined)).toBe('')
+    expect(durationToMinutesText(21)).toBe('1')
+    expect(durationToMinutesText(1500)).toBe('25')
+  })
+
+  it('passes the duration through only when given', () => {
+    const ratings = { a: { stars: 4, note: '' } }
+    expect(toSessionInput('2026-11-01', '', ratings)).not.toHaveProperty('durationSeconds')
+    expect(toSessionInput('2026-11-01', '', ratings, null)).toMatchObject({ durationSeconds: null })
+    expect(toSessionInput('2026-11-01', '', ratings, 600)).toMatchObject({ durationSeconds: 600 })
   })
 })

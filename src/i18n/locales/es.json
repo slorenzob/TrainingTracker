@@ -201,7 +201,10 @@
     "deleteTitle": "¿Eliminar esta sesión?",
     "deleteMessage": "Se borrarán sus puntuaciones y notas.",
     "saved": "Sesión guardada.",
-    "duration": "Duración: {{duration}}"
+    "duration": "Duración: {{duration}}",
+    "durationMinutes": "Duración (minutos)",
+    "durationPlaceholder": "Por ejemplo, 20",
+    "durationInvalid": "Introduce los minutos como un número entero entre 1 y 1440."
   },
   "stars": {
     "label": "Puntuación",

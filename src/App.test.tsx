@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import App from './App'
 import { startActiveSession } from './db/activeSession'
 import { createDog } from './db/dogs'
@@ -128,10 +128,17 @@ describe('sessions', () => {
     expect(screen.getByRole('img', { name: 'Llamada: 4 estrellas' })).toBeInTheDocument()
     expect(screen.getByText('Viene a la primera')).toBeInTheDocument()
     expect(screen.getByText('No realizado')).toBeInTheDocument()
+    // Recorded without a duration.
+    expect(screen.getByText('Duración: --')).toBeInTheDocument()
   })
 })
 
 describe('progress', () => {
+  // The exercise page lazy-loads the chart. Importing Recharts for the first time takes
+  // seconds when the whole suite runs in parallel, which could outlast findBy's wait and
+  // fail the test. Load it up front, with its own time budget; lazy() then resolves at once.
+  beforeAll(() => import('./features/stats/StarsChart'), 30_000)
+
   it('summarizes the selected plan and shows an exercise’s history', async () => {
     const dog = await createDog({ name: 'Toby' })
     const ids = []

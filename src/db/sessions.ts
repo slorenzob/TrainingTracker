@@ -13,8 +13,11 @@ export interface SessionInput {
   date: string
   comment: string
   results: SessionResultInput[]
-  /** Only set when the session was timed; editing keeps the stored value. */
-  durationSeconds?: number
+  /**
+   * Time trained. On create, a number stores it and null/undefined leaves it out. On
+   * update, undefined keeps the stored value and null removes it.
+   */
+  durationSeconds?: number | null
 }
 
 export interface SessionWithResults extends Session {
@@ -22,6 +25,15 @@ export interface SessionWithResults extends Session {
 }
 
 const isStars = (n: number): n is Stars => Number.isInteger(n) && n >= 1 && n <= 5
+
+/** Validated duration in whole seconds, or undefined when there is none. */
+function normalizeDuration(seconds: number | null | undefined): number | undefined {
+  if (seconds === null || seconds === undefined) return undefined
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    throw new ValidationError(`Invalid duration: ${seconds}`)
+  }
+  return Math.round(seconds)
+}
 
 /** Validates the results against the plan and resolves each one's exercise id. */
 async function buildResults(
@@ -60,15 +72,14 @@ export async function createSession(
   return db.transaction('rw', tables(), async () => {
     const plan = await db.plans.get(planId)
     if (!plan) throw new EntityNotFoundError('Plan', planId)
+    const durationSeconds = normalizeDuration(input.durationSeconds)
     const session: Session = {
       id: newId(),
       planId,
       dogId: plan.dogId,
       date: input.date,
       comment: input.comment.trim(),
-      ...(input.durationSeconds !== undefined
-        ? { durationSeconds: Math.max(0, Math.round(input.durationSeconds)) }
-        : {}),
+      ...(durationSeconds !== undefined ? { durationSeconds } : {}),
       createdAt: nowIso(),
     }
     const results = await buildResults(planId, session.id, input.results)
@@ -84,6 +95,11 @@ export async function updateSession(id: string, input: SessionInput): Promise<Se
     const current = await db.sessions.get(id)
     if (!current) throw new EntityNotFoundError('Session', id)
     const session: Session = { ...current, date: input.date, comment: input.comment.trim() }
+    if (input.durationSeconds !== undefined) {
+      const duration = normalizeDuration(input.durationSeconds)
+      if (duration === undefined) delete session.durationSeconds
+      else session.durationSeconds = duration
+    }
     const results = await buildResults(current.planId, id, input.results)
     await db.sessions.put(session)
     await db.sessionResults.where('sessionId').equals(id).delete()

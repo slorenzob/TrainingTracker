@@ -2,17 +2,32 @@
   padding: var(--tt-space-4);
 }
 
+/* M3 filled card in primary container: the one thing to do on this screen. */
 .home-active {
+  --background: var(--md-sys-color-primary-container);
+  --color: var(--md-sys-color-on-primary-container);
   margin: 0;
-  border-radius: var(--tt-radius-lg);
+  border-radius: var(--tt-radius-xl);
 }
 
-.home-active__timer {
+.home-active ion-card-title,
+.home-active ion-card-subtitle {
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.home-active ion-card-title {
+  font-size: 1.375rem;
+  font-weight: 400;
+}
+
+/* Beats Ionic's `.card-content-md p` size. */
+.home-active .home-active__timer {
   margin-bottom: var(--tt-space-3);
-  color: var(--tt-ink);
-  font-size: 1.75rem;
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 3.5rem;
+  line-height: 4rem;
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .start-step {
@@ -25,39 +40,46 @@
 .start-heading {
   margin: var(--tt-space-1) 0 0;
   padding: 0 var(--tt-space-4);
-  font-size: 1.375rem;
+  font-size: 1.75rem;
+  font-weight: 400;
 }
 
 .start-footer {
   padding: 0 var(--tt-space-4) var(--tt-space-4);
 }
 
+/* Dog, plan and timer in a primary container card. */
 .active-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--tt-space-3);
-  padding: var(--tt-space-4) var(--tt-space-4) 0;
+  margin: var(--tt-space-2) var(--tt-space-4) 0;
+  padding: 20px 24px;
+  border-radius: var(--tt-radius-xl);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 .active-header h1 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .active-header p {
   margin: var(--tt-space-1) 0 0;
-  color: var(--tt-ink-muted);
 }
 
 .active-timer {
-  font-size: 2rem;
+  font-size: 2.8rem;
+  line-height: 3.25rem;
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .active-timer--paused {
-  color: var(--tt-ink-muted);
+  opacity: 0.6;
 }
 
 .active-exercise__info {

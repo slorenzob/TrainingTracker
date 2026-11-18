@@ -18,9 +18,9 @@
 }
 
 .weekday-picker__day[aria-pressed='true'] {
-  border-color: var(--ion-color-primary);
-  background: var(--ion-color-primary);
-  color: var(--ion-color-primary-contrast);
+  border-color: var(--md-sys-color-secondary-container);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
 }
 
 .weekday-picker__day:focus-visible {
@@ -29,15 +29,17 @@
 }
 
 .reminder-banner {
-  --background: var(--tt-warning-soft);
-  --color: var(--tt-on-warning-soft);
+  --background: var(--md-sys-color-tertiary-container);
+  --color: var(--md-sys-color-on-tertiary-container);
   margin: 12px 16px 0;
   border-radius: var(--tt-radius-lg);
   box-shadow: none;
 }
 
 .reminder-banner ion-card-title {
-  color: var(--tt-on-warning-soft);
+  color: var(--md-sys-color-on-tertiary-container);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .reminder-banner ion-card-header {

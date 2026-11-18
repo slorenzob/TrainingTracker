@@ -5,7 +5,7 @@ export interface StatTile {
   value: string
 }
 
-/** Row of headline numbers: sentence-case label above a semibold value. */
+/** Row of headline numbers: the value large, its label below (read label first). */
 export default function StatTiles({ tiles }: { tiles: StatTile[] }) {
   return (
     <dl className="stat-tiles">

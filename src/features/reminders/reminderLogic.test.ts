@@ -19,32 +19,31 @@ const sunday = new Date(2026, 10, 1, 10, 0)
 
 describe('dueToday', () => {
   it('returns nothing when no enabled reminder falls on today', () => {
-    expect(dueToday([reminder([1, 3])], [luna], new Set(), sunday)).toBeNull()
-    expect(dueToday([reminder([0], { enabled: false })], [luna], new Set(), sunday)).toBeNull()
+    expect(dueToday([reminder([1, 3])], [luna], new Set(), sunday).size).toBe(0)
+    expect(dueToday([reminder([0], { enabled: false })], [luna], new Set(), sunday).size).toBe(0)
   })
 
-  it('applies a reminder without dog to every dog, sorted by name', () => {
+  it('applies a reminder without dog to every dog', () => {
     const due = dueToday([reminder([0])], [toby, luna], new Set(), sunday)
-    expect(due?.dogs.map((d) => d.name)).toEqual(['Luna', 'Toby'])
-    expect(due?.time).toBe('18:30')
+    expect(Object.fromEntries(due)).toEqual({ luna: '18:30', toby: '18:30' })
   })
 
-  it('leaves out dogs that already trained today and uses the earliest time', () => {
+  it('gives each dog its earliest time and leaves out dogs that already trained', () => {
     const due = dueToday(
       [
         reminder([0], { dogId: 'luna', time: '19:00' }),
+        reminder([0], { time: '20:00' }),
         reminder([0, 6], { dogId: 'toby', time: '08:15' }),
       ],
-      [luna, toby],
+      [luna, toby, dog('nala', 'Nala')],
       new Set(['toby']),
       sunday,
     )
-    expect(due?.dogs.map((d) => d.name)).toEqual(['Luna'])
-    expect(due?.time).toBe('08:15')
+    expect(Object.fromEntries(due)).toEqual({ luna: '19:00', nala: '20:00' })
   })
 
   it('returns nothing once every reminded dog has trained', () => {
-    expect(dueToday([reminder([0])], [luna], new Set(['luna']), sunday)).toBeNull()
+    expect(dueToday([reminder([0])], [luna], new Set(['luna']), sunday).size).toBe(0)
   })
 })
 
